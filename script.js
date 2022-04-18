@@ -21,6 +21,9 @@ const ballCollisionRight = offset + boardWidth - ballRadius;
 const ballCollisionTop = offset + ballRadius;
 const ballCollisionBottom = offset + boardHeight - ballRadius;
 
+const trajectoryNumber = 3;
+const coefficientOfRestitutionBetweenBallAndWall = 0.9;
+
 let derectionPosition = {
     x: 5,
     y: 10
@@ -120,6 +123,7 @@ const derectionDecider = canvas
                 const ballY = Number(ball.attr("cy"));
                 const collisionPoint =
                     calculateCollisionPoint(ballX, ballY, event.x, event.y);
+                drawAllTrajectory(ballX, ballY, collisionPoint.x, collisionPoint.y);
                 drawTrajectory(ballX, ballY, collisionPoint.x, collisionPoint.y);
                 derectionPosition.x = event.x - ballX;
                 derectionPosition.y = event.y - ballY;
@@ -141,9 +145,7 @@ const ball = canvas
                 derectionDecider
                     .attr("cx", event.x)
                     .attr("cy", event.y);
-                const collisionPoint =
-                    calculateCollisionPoint(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
-                drawTrajectory(event.x, event.y, collisionPoint.x, collisionPoint.y);
+                drawAllTrajectory(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
             })
 );
 
@@ -188,6 +190,35 @@ function calculateCollisionPoint(x1, y1, x2, y2) {
     } else {
         return { x: (ballCollisionTop - y1) * (x2 - x1) / (y2 - y1) + x1, y: ballCollisionTop };
     }
+}
+
+function calculateNextEndPoint(x1, y1, x2, y2) {
+    if (x2 == ballCollisionLeft || x2 == ballCollisionRight) {
+        return {
+            x: x1 * coefficientOfRestitutionBetweenBallAndWall +
+                x2 * (1 - coefficientOfRestitutionBetweenBallAndWall),
+            y: 2 * y2 - y1
+        };
+    }
+    return {
+        x: 2 * x2 - x1, y: y1 * coefficientOfRestitutionBetweenBallAndWall +
+            y2 * (1 - coefficientOfRestitutionBetweenBallAndWall)
+    };
+}
+
+function drawAllTrajectory(x1, y1, x2, y2) {
+    let startPoint = { x: x1, y: y1 };
+    let endPoint = { x: x2, y: y2 };
+    for (let i = 0; i < trajectoryNumber; i++) {
+        const collisionPoint =
+            calculateCollisionPoint(startPoint.x, startPoint.y,
+                endPoint.x, endPoint.y);
+        drawTrajectory(startPoint.x, startPoint.y, collisionPoint.x, collisionPoint.y);
+        endPoint = calculateNextEndPoint(startPoint.x, startPoint.y,
+            collisionPoint.x, collisionPoint.y);
+        startPoint = { x: collisionPoint.x, y: collisionPoint.y };
+        if (i == 0) console.log(endPoint);
+    } 
 }
 
 drawTrajectory(ball.attr("cx"), ball.attr("cy"), collision_point[0].x, collision_point[0].y);
