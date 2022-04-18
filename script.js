@@ -99,4 +99,11 @@ const ball = canvas
     .attr("cx", board_center_x)
     .attr("cy", offset + board_height * 0.7)
     .attr("r", ball_raduis)
-    .attr("fill", "rgb(200,130,120)");
+    .attr("fill", "rgb(200,130,120)")
+    .call(
+        d3.drag()
+            .on("drag", (event) => {
+                ball.attr("cx", event.x)
+                    .attr("cy", event.y);
+            })
+);
