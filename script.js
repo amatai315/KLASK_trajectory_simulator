@@ -12,6 +12,7 @@ const board_center_y = offset + board_height / 2;
 const biscuit_radius = 5;
 const goal_radius = 20;
 const service_area_radius = 50;
+const ball_raduis = 8;
 
 const canvas = d3
     .select("body")
@@ -93,3 +94,9 @@ const opponent_service_area_right = canvas
     .attr("stroke", "white")
     .attr("stroke-width", "2")
     .attr("fill", "rgba(0,0,0,0)");
+const ball = canvas
+    .append("circle")
+    .attr("cx", board_center_x)
+    .attr("cy", offset + board_height * 0.7)
+    .attr("r", ball_raduis)
+    .attr("fill", "rgb(200,130,120)");
