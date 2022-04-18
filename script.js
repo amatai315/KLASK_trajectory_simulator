@@ -5,9 +5,12 @@ const board_width = 300;
 const board_height = board_width * 1.4;
 const biscuit_circle_position_difference_ratio = 0.25;
 const biscuit_circle_interval = board_width * biscuit_circle_position_difference_ratio;
+const goal_board_center_position_difference_ratio = 0.4;
+const goal_board_center_interval = board_height * goal_board_center_position_difference_ratio;
 const board_center_x = offset + board_width / 2;
 const board_center_y = offset + board_height / 2;
 const biscuit_radius = 5;
+const goal_radius = 20;
 
 const canvas = d3
     .select("body")
@@ -39,3 +42,15 @@ const biscuit_circle_right = canvas
     .attr("cy", board_center_y)
     .attr("r", biscuit_radius)
     .attr("fill", "white");
+const my_goal = canvas
+    .append("circle")
+    .attr("cx", board_center_x)
+    .attr("cy", board_center_y + goal_board_center_interval)
+    .attr("r", goal_radius)
+    .attr("fill", "rgb(100,150,256)");
+const opponent_goal = canvas
+    .append("circle")
+    .attr("cx", board_center_x)
+    .attr("cy", board_center_y - goal_board_center_interval)
+    .attr("r", goal_radius)
+    .attr("fill", "rgb(100,150,256)");
