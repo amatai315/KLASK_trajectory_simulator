@@ -24,11 +24,6 @@ const ballCollisionBottom = offset + boardHeight - ballRadius;
 const trajectoryNumber = 3;
 const coefficientOfRestitutionBetweenBallAndWall = 0.9;
 
-let derectionPosition = {
-    x: 5,
-    y: 10
-};
-
 const canvas = d3
     .select("body")
     .append("svg")
@@ -149,11 +144,6 @@ const ball = canvas
             })
 );
 
-let collision_point = [
-    { x: ballCollisionRight, y: 90 },
-    { x: 230, y: ballCollisionTop }
-];
-
 function drawTrajectory(startPointX, startPointY, goalPointX, goalPointY) {
     canvas.append("line")
         .attr("class", "trajectory")
@@ -217,8 +207,14 @@ function drawAllTrajectory(x1, y1, x2, y2) {
         endPoint = calculateNextEndPoint(startPoint.x, startPoint.y,
             collisionPoint.x, collisionPoint.y);
         startPoint = { x: collisionPoint.x, y: collisionPoint.y };
-        if (i == 0) console.log(endPoint);
     } 
 }
 
-drawTrajectory(ball.attr("cx"), ball.attr("cy"), collision_point[0].x, collision_point[0].y);
+let derectionPosition = {
+    x: 15,
+    y: -17
+};
+
+const firstBallX = Number(ball.attr("cx"));
+const firstBallY = Number(ball.attr("cy"));
+drawAllTrajectory(firstBallX, firstBallY, firstBallX + derectionPosition.x, firstBallY + derectionPosition.y);
