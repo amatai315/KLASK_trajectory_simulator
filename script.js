@@ -135,6 +135,7 @@ const ball = canvas
         d3.drag()
             .on("drag", (event) => {
                 deleteTrajectory();
+                if (!isInboardX(event.x) || !isInboardY(event.y)) return;
                 ball.attr("cx", event.x)
                     .attr("cy", event.y);
                 derectionDecider
@@ -169,7 +170,7 @@ function isInboardY(y) {
     return ballCollisionTop <= y && y <= ballCollisionBottom;
 }
 function isInboardX(x) {
-    return ballCollisionLeft <= x <= ballCollisionRight;
+    return ballCollisionLeft <= x && x <= ballCollisionRight;
 }
 
 function calculateCollisionPoint(x1, y1, x2, y2) {
