@@ -30,8 +30,8 @@ const ballCollisionRight = offset + boardWidth - ballRadius;
 const ballCollisionTop = offset + ballRadius;
 const ballCollisionBottom = offset + boardHeight - ballRadius;
 
-const trajectoryNumber = 4;
-const coefficientOfRestitutionBetweenBallAndWall = 0.9;
+const trajectoryNumber = 5;
+const coefficientOfRestitutionBetweenBallAndWall = 0.8;
 
 const canvas = d3
     .select("body")
@@ -149,6 +149,20 @@ const ball = canvas
                 drawAllTrajectory(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
             })
 );
+//remove commentout to adjust coefficient
+// const coefficientInput = d3
+//     .select("body")
+//     .append("input")
+//     .attr("id", "coefficient-input")
+//     .attr("type", "text")
+//     .attr("placeholder", coefficientOfRestitutionBetweenBallAndWall)
+//     .on("input", () => {
+//         coefficientOfRestitutionBetweenBallAndWall = d3.select("#coefficient-input").node().value;
+//         deleteTrajectory();
+//         drawAllTrajectory(Number(ball.attr("cx")), Number(ball.attr("cy")),
+//             Number(ball.attr("cx")) + derectionPosition.x,
+//             Number(ball.attr("cy"))+ derectionPosition.y)
+//     });
 
 function drawTrajectory(startPointX, startPointY, goalPointX, goalPointY) {
     canvas.append("line")
