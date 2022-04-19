@@ -139,8 +139,8 @@ const ball = canvas
     .call(
         d3.drag()
             .on("drag", (event) => {
-                deleteTrajectory();
                 if (!isInboardX(event.x) || !isInboardY(event.y)) return;
+                deleteTrajectory();
                 ball.attr("cx", event.x)
                     .attr("cy", event.y);
                 derectionDecider
