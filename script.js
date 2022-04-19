@@ -20,7 +20,7 @@ const serviceAreaRadius = realServiceAreaRadius * raitoDisplayToReal;
 
 const offset = 20;
 const canvasWidth = boardWidth + offset * 2;
-const canvasHeight = boardHeight + offset * 2;
+const canvasHeight = boardHeight + offset * 2 + boardHeight * 0.3;
 
 const boardCenterX = offset + boardWidth / 2;
 const boardCenterY = offset + boardHeight / 2;
