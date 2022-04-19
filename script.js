@@ -116,10 +116,7 @@ const derectionDecider = canvas
                 deleteTrajectory();
                 const ballX = Number(ball.attr("cx"));
                 const ballY = Number(ball.attr("cy"));
-                const collisionPoint =
-                    calculateCollisionPoint(ballX, ballY, event.x, event.y);
-                drawAllTrajectory(ballX, ballY, collisionPoint.x, collisionPoint.y);
-                drawTrajectory(ballX, ballY, collisionPoint.x, collisionPoint.y);
+                drawAllTrajectory(ballX, ballY, event.x, event.y);
                 derectionPosition.x = event.x - ballX;
                 derectionPosition.y = event.y - ballY;
             })
