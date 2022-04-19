@@ -7,7 +7,7 @@ const realDefferenceBetweenGoalToBoardCenter = (313 + realGoalRadius * 2) / 2;
 const realBallRadius = 14.5 / 2;
 const realServiceAreaRadius = 47;
 
-const raitoDisplayToReal = 1.7;
+const raitoDisplayToReal = 2;
 
 const boardWidth = realBoardWidth * raitoDisplayToReal;
 const boardHeight = realBoardHeight * raitoDisplayToReal;
