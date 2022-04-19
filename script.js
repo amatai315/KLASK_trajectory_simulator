@@ -1,17 +1,26 @@
-const canvasWidth = 400;
-const canvasHeight = canvasWidth * 1.4;
-const offset = 20;
-const boardWidth = 300;
-const boardHeight = boardWidth * 1.4;
+const realBoardWidth = 319;
+const realBoardHeight = 421;
+const realBiscuitRadius = 9 / 2;
+const realBiscuitCircleInterval = 85;
+const realGoalRadius = 37 / 2;
+const realDefferenceBetweenGoalToBoardCenter = (313 + realGoalRadius * 2) / 2;
+const realBallRadius = 14.5 / 2;
+const realServiceAreaRadius = 47;
 
-const biscuitCirclePositionDifferenceRaito = 0.25;
-const biscuitCircleInterval = boardWidth * biscuitCirclePositionDifferenceRaito;
-const goalBoardCenterPositionDifferenceRatio = 0.4;
-const goalBoardCenterInterval = boardHeight * goalBoardCenterPositionDifferenceRatio;
-const biscuitRadius = 5;
-const goalRadius = 20;
-const serviceAreaRadius = 50;
-const ballRadius = 8;
+const raitoDisplayToReal = 2;
+
+const boardWidth = realBoardWidth * raitoDisplayToReal;
+const boardHeight = realBoardHeight * raitoDisplayToReal;
+const biscuitRadius = realBiscuitRadius * raitoDisplayToReal;
+const biscuitCircleInterval = realBiscuitCircleInterval * raitoDisplayToReal;
+const goalRadius = realGoalRadius * raitoDisplayToReal;
+const goalBoardCenterInterval = realDefferenceBetweenGoalToBoardCenter * raitoDisplayToReal;
+const ballRadius = realBallRadius * raitoDisplayToReal;
+const serviceAreaRadius = realServiceAreaRadius * raitoDisplayToReal;
+
+const offset = 20;
+const canvasWidth = boardWidth + offset * 2;
+const canvasHeight = boardHeight + offset * 2;
 
 const boardCenterX = offset + boardWidth / 2;
 const boardCenterY = offset + boardHeight / 2;
@@ -21,7 +30,7 @@ const ballCollisionRight = offset + boardWidth - ballRadius;
 const ballCollisionTop = offset + ballRadius;
 const ballCollisionBottom = offset + boardHeight - ballRadius;
 
-const trajectoryNumber = 3;
+const trajectoryNumber = 4;
 const coefficientOfRestitutionBetweenBallAndWall = 0.9;
 
 const canvas = d3
@@ -208,8 +217,8 @@ function drawAllTrajectory(x1, y1, x2, y2) {
 }
 
 let derectionPosition = {
-    x: 15,
-    y: -17
+    x: boardWidth * 0.4,
+    y: - boardHeight * 0.3
 };
 
 const firstBallX = Number(ball.attr("cx"));
