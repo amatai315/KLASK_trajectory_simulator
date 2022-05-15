@@ -30,6 +30,8 @@ const ballCollisionRight = offset + boardWidth - ballRadius;
 const ballCollisionTop = offset + ballRadius;
 const ballCollisionBottom = offset + boardHeight - ballRadius;
 
+const ballInitialPosition = { x: boardCenterX - boardWidth * 0.2, y: offset + boardHeight * 0.7 };
+
 const trajectoryNumber = 5;
 const coefficientOfRestitutionBetweenBallAndWall = 0.8;
 
@@ -115,8 +117,8 @@ const opponent_service_area_right = canvas
     .attr("fill", "rgba(0,0,0,0)");
 const derectionDecider = canvas
     .append("circle")
-    .attr("cx", boardCenterX)
-    .attr("cy", offset + boardHeight * 0.7)
+    .attr("cx", ballInitialPosition.x)
+    .attr("cy", ballInitialPosition.y)
     .attr("r", ballRadius * 5)
     .attr("fill", "rgba(30,230,30, 0.5)")
     .call(
@@ -132,10 +134,13 @@ const derectionDecider = canvas
     );
 const ball = canvas
     .append("circle")
-    .attr("cx", boardCenterX)
-    .attr("cy", offset + boardHeight * 0.7)
+    .attr("cx", ballInitialPosition.x)
+    .attr("cy", ballInitialPosition.y)
     .attr("r", ballRadius)
     .attr("fill", "rgb(200,130,120)")
+    .attr("stroke", "white")
+    .attr("stroke-width", 3)
+    .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
     .call(
         d3.drag()
             .on("drag", (event) => {
