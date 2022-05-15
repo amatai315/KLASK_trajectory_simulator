@@ -31,6 +31,7 @@ const ballCollisionTop = offset + ballRadius;
 const ballCollisionBottom = offset + boardHeight - ballRadius;
 
 const ballInitialPosition = { x: boardCenterX - boardWidth * 0.2, y: offset + boardHeight * 0.7 };
+const derectionDeciderRadius = ballRadius * 5;
 
 const trajectoryNumber = 5;
 const coefficientOfRestitutionBetweenBallAndWall = 0.8;
@@ -119,15 +120,17 @@ const derectionDecider = canvas
     .append("circle")
     .attr("cx", ballInitialPosition.x)
     .attr("cy", ballInitialPosition.y)
-    .attr("r", ballRadius * 5)
+    .attr("r", derectionDeciderRadius)
     .attr("fill", "rgba(30,230,30, 0.5)")
     .call(
         d3.drag()
             .on("drag", (event) => {
                 deleteTrajectory();
+                deleteHandle();
                 const ballX = Number(ball.attr("cx"));
                 const ballY = Number(ball.attr("cy"));
                 drawAllTrajectory(ballX, ballY, event.x, event.y);
+                drawHandle(ballX, ballY, event.x, event.y)
                 derectionPosition.x = event.x - ballX;
                 derectionPosition.y = event.y - ballY;
             })
@@ -146,12 +149,14 @@ const ball = canvas
             .on("drag", (event) => {
                 if (!isInboardX(event.x) || !isInboardY(event.y)) return;
                 deleteTrajectory();
+                deleteHandle();
                 ball.attr("cx", event.x)
                     .attr("cy", event.y);
                 derectionDecider
                     .attr("cx", event.x)
                     .attr("cy", event.y);
                 drawAllTrajectory(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
+                drawHandle(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
             })
 );
 //remove commentout to adjust coefficient
@@ -235,11 +240,42 @@ function drawAllTrajectory(x1, y1, x2, y2) {
     } 
 }
 
+function distanceOfTwoPoints(x1, y1, x2, y2) {
+    return ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** (1 / 2);
+}
+
+function calculatePositionOfHandle(x1, y1, x2, y2) {
+    const startPoint = { x: x1, y: y1 };
+    const endPoint = { x: x2, y: y2 };
+    const magnification = derectionDeciderRadius /
+        distanceOfTwoPoints(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+    return {
+        x: startPoint.x + (endPoint.x - startPoint.x) * magnification,
+        y: startPoint.y + (endPoint.y - startPoint.y) * magnification
+    };
+}
+
+function drawHandle(x1, y1, x2, y2) {
+    const potisionOfHandle = calculatePositionOfHandle(x1, y1, x2, y2);
+    console.log(potisionOfHandle);
+    canvas.append("circle")
+        .attr("class", "handle")
+        .attr("cx", potisionOfHandle.x)
+        .attr("cy", potisionOfHandle.y)
+        .attr("r", 10)
+        .attr("fill", "rgba(30,230,30)")
+}
+
+function deleteHandle() {
+    d3.selectAll(".handle").remove()
+}
+
 let derectionPosition = {
     x: boardWidth * 0.4,
     y: - boardHeight * 0.3
 };
 
-const firstBallX = Number(ball.attr("cx"));
-const firstBallY = Number(ball.attr("cy"));
-drawAllTrajectory(firstBallX, firstBallY, firstBallX + derectionPosition.x, firstBallY + derectionPosition.y);
+drawAllTrajectory(ballInitialPosition.x, ballInitialPosition.y,
+    ballInitialPosition.x + derectionPosition.x, ballInitialPosition.y + derectionPosition.y);
+drawHandle(ballInitialPosition.x, ballInitialPosition.y,
+    ballInitialPosition.x + derectionPosition.x, ballInitialPosition.y + derectionPosition.y);
