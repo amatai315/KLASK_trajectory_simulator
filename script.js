@@ -258,12 +258,30 @@ function calculatePositionOfHandle(x1, y1, x2, y2) {
 function drawHandle(x1, y1, x2, y2) {
     const potisionOfHandle = calculatePositionOfHandle(x1, y1, x2, y2);
     console.log(potisionOfHandle);
-    canvas.append("circle")
+    const handle = canvas.append("circle")
         .attr("class", "handle")
         .attr("cx", potisionOfHandle.x)
         .attr("cy", potisionOfHandle.y)
         .attr("r", 10)
         .attr("fill", "rgba(30,230,30)")
+        .attr("stroke", "white")
+        .attr("stroke-width", 2)
+        .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
+        .call(
+            d3.drag()
+                .on("drag", (event) => {
+                deleteTrajectory();
+                const ballX = Number(ball.attr("cx"));
+                const ballY = Number(ball.attr("cy"));
+                drawAllTrajectory(ballX, ballY, event.x, event.y);
+                const potisionOfHandle =
+                    calculatePositionOfHandle(ballX, ballY, event.x, event.y);
+                handle
+                    .attr("cx", potisionOfHandle.x)
+                    .attr("cy", potisionOfHandle.y);
+                derectionPosition.x = event.x - ballX;
+                derectionPosition.y = event.y - ballY;
+        }))
 }
 
 function deleteHandle() {
