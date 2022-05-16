@@ -48,7 +48,7 @@ class Point {
     }
 }
 
-const ballInitialPosition = new Point( boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
+const ballInitialPoint = new Point( boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
 const derectionDeciderRadius = ballRadius * 5;
 const myGoalPoint = new Point(boardCenterX, boardCenterY + goalBoardCenterInterval);
 const opponentGoalPoint = new Point(boardCenterX, boardCenterY - goalBoardCenterInterval);
@@ -140,8 +140,8 @@ const opponent_service_area_right = canvas
     .attr("fill", "rgba(0,0,0,0)");
 const derectionDecider = canvas
     .append("circle")
-    .attr("cx", ballInitialPosition.x)
-    .attr("cy", ballInitialPosition.y)
+    .attr("cx", ballInitialPoint.x)
+    .attr("cy", ballInitialPoint.y)
     .attr("r", derectionDeciderRadius)
     .attr("fill", "rgba(30,230,30, 0.5)")
     .call(
@@ -153,13 +153,13 @@ const derectionDecider = canvas
                 const eventPoint = new Point(event.x, event.y);
                 drawAllTrajectory(ballPoint, eventPoint);
                 drawHandle(ballPoint, eventPoint);
-                derectionPosition = vectorP2ToP1(ballPoint, eventPoint);
+                ballDirectionVector = vectorP2ToP1(ballPoint, eventPoint);
             })
     );
 const ball = canvas
     .append("circle")
-    .attr("cx", ballInitialPosition.x)
-    .attr("cy", ballInitialPosition.y)
+    .attr("cx", ballInitialPoint.x)
+    .attr("cy", ballInitialPoint.y)
     .attr("r", ballRadius)
     .attr("fill", "rgb(200,130,120)")
     .attr("stroke", "white")
@@ -173,14 +173,14 @@ const ball = canvas
                 deleteTrajectory();
                 deleteHandle();
                 deleteNoticeLine();
-                const destnationPotision = pointAddedAsVector(ballPoint, derectionPosition);
+                const destinationPoint = pointAddedAsVector(ballPoint, ballDirectionVector);
                 ball.attr("cx", ballPoint.x)
                     .attr("cy", ballPoint.y);
                 derectionDecider
                     .attr("cx", ballPoint.x)
                     .attr("cy", ballPoint.y);
-                drawAllTrajectory(ballPoint, destnationPotision);
-                drawHandle(ballPoint, destnationPotision);
+                drawAllTrajectory(ballPoint, destinationPoint);
+                drawHandle(ballPoint, destinationPoint);
                 drawAllNoticeLine(ballPoint);
             })
 );
@@ -195,8 +195,8 @@ const ball = canvas
 //         coefficientOfRestitutionBetweenBallAndWall = d3.select("#coefficient-input").node().value;
 //         deleteTrajectory();
 //         const ballPoint = new Point(Number(ball.attr("cx")), Number(ball.attr("cy"));
-//         const destnationPotision = new Point(ballPosition.x + derectionPosition.x, ballPosition.y + derectionPosition.y);
-//         drawAllTrajectory(ballPoint, destnationPotision);
+//         const destinationPoint = new Point(ballPoint.x + ballDirectionVector.x, ballPoint.y + ballDirectionVector.y);
+//         drawAllTrajectory(ballPoint, destinationPoint);
 //     });
 
 function drawTrajectory(p1, p2) {
@@ -270,7 +270,7 @@ function distanceOfTwoPoints(p1, p2) {
     return ((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2) ** (1 / 2);
 }
 
-function calculatePositionOfHandle(startPoint, endPoint) {
+function calculatePointOfHandle(startPoint, endPoint) {
     const magnification = derectionDeciderRadius /
         distanceOfTwoPoints(startPoint, endPoint);
     return new Point(startPoint.x + (endPoint.x - startPoint.x) * magnification,
@@ -278,11 +278,11 @@ function calculatePositionOfHandle(startPoint, endPoint) {
 }
 
 function drawHandle(startPoint, endPoint) {
-    const potisionOfHandle = calculatePositionOfHandle(startPoint, endPoint);
+    const pointOfHandle = calculatePointOfHandle(startPoint, endPoint);
     const handle = canvas.append("circle")
         .attr("class", "handle")
-        .attr("cx", potisionOfHandle.x)
-        .attr("cy", potisionOfHandle.y)
+        .attr("cx", pointOfHandle.x)
+        .attr("cy", pointOfHandle.y)
         .attr("r", 10)
         .attr("fill", "rgba(30,230,30)")
         .attr("stroke", "white")
@@ -295,12 +295,12 @@ function drawHandle(startPoint, endPoint) {
                     const ballPoint = getBallPoint();
                     const eventPoint = new Point(event.x, event.y);
                     drawAllTrajectory(ballPoint, eventPoint);
-                    const potisionOfHandle =
-                        calculatePositionOfHandle(ballPoint, eventPoint);
+                    const pointOfHandle =
+                        calculatePointOfHandle(ballPoint, eventPoint);
                     handle
-                        .attr("cx", potisionOfHandle.x)
-                        .attr("cy", potisionOfHandle.y);
-                    derectionPosition = vectorP2ToP1(ballPoint, eventPoint);
+                        .attr("cx", pointOfHandle.x)
+                        .attr("cy", pointOfHandle.y);
+                    ballDirectionVector = vectorP2ToP1(ballPoint, eventPoint);
         }))
 }
 
@@ -348,15 +348,15 @@ function drawNoticeLine(p1, p2) {
     .attr("stroke", "rgb(256,0,0)");
 }
 
-function drawAllNoticeLine(ballPosition) {
+function drawAllNoticeLine(ballPoint) {
     const angleDevide = 1800;
     for (let i = 0; i < angleDevide; i++){
         const angle = i / angleDevide * 2 * Math.PI;
-        const destnationPotision =
-            new Point(ballPosition.x + derectionDeciderRadius * Math.cos(angle),
-                ballPosition.y + derectionDeciderRadius * Math.sin(angle));
-        if (isIntoOpponentGoalFirst(ballPosition, destnationPotision)) {
-            drawNoticeLine(ballPosition, destnationPotision);
+        const destinationPoint =
+            new Point(ballPoint.x + derectionDeciderRadius * Math.cos(angle),
+                ballPoint.y + derectionDeciderRadius * Math.sin(angle));
+        if (isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
+            drawNoticeLine(ballPoint, destinationPoint);
         }
     }
 }
@@ -385,10 +385,10 @@ function innerProduct(p1, p2) {
     return p1.x * p2.x + p1.y * p2.y;
 }
 
-let derectionPosition = new Point(boardWidth * 0.4, -boardHeight * 0.3);
+let ballDirectionVector = new Point(boardWidth * 0.4, -boardHeight * 0.3);
 
-const initialDestinationPosition = pointAddedAsVector(ballInitialPosition, derectionPosition);
+const initialDestinationPoint = pointAddedAsVector(ballInitialPoint, ballDirectionVector);
 
-drawAllTrajectory(ballInitialPosition, initialDestinationPosition);
-drawHandle(ballInitialPosition, initialDestinationPosition);
-drawAllNoticeLine(ballInitialPosition);
+drawAllTrajectory(ballInitialPoint, initialDestinationPoint);
+drawHandle(ballInitialPoint, initialDestinationPoint);
+drawAllNoticeLine(ballInitialPoint);
