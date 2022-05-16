@@ -339,9 +339,7 @@ function isIntoMyGoal(startPoint, goalPoint) {
     return distance <= goalRadius;
 }
 
-function isIntoOpponentGoalFirst(x1, y1, x2, y2) {
-    let startPoint = new Point(x1, y1);
-    let endPoint = new Point(x2, y2);
+function isIntoOpponentGoalFirst(startPoint, endPoint) {
     for (let i = 0; i < trajectoryNumber; i++) {
         const collisionPoint =
             calculateCollisionPoint(startPoint.x, startPoint.y,
@@ -372,8 +370,7 @@ function drawAllNoticeLine(ballPosition) {
         const destnationPotision =
             new Point(ballPosition.x + derectionDeciderRadius * Math.cos(angle),
                 ballPosition.y + derectionDeciderRadius * Math.sin(angle));
-        if (isIntoOpponentGoalFirst(ballPosition.x, ballPosition.y,
-            ballPosition.x + Math.cos(angle), ballPosition.y + Math.sin(angle))) {
+        if (isIntoOpponentGoalFirst(ballPosition, destnationPotision)) {
             drawNoticeLine(ballPosition, destnationPotision);
         }
     }
