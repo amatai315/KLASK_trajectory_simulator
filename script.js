@@ -35,6 +35,17 @@ class Point {
         this.x = x;
         this.y = y;
     }
+    get norm() {
+        return this.calcNorm();
+    }
+
+    get unitVector() {
+        return new Point(this.x / this.calcNorm(), this.y / this.calcNorm());
+    }
+
+    calcNorm() {
+        return (this.x ** 2 + this.y ** 2) ** (1 / 2);
+    }
 }
 
 const ballInitialPosition = new Point( boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
@@ -301,48 +312,30 @@ function deleteHandle() {
     d3.selectAll(".handle").remove()
 }
 
-function calculateLineEquationParamter(p1, p2) {
-    if (p1.x == p2.x) {
-        a = 1;
-        b = 0;
-        c = - p1.x;
-    } else if (p1.y == p2.y) {
-        a = 0;
-        b = 1;
-        c = - p1.y;
-    } else {
-        a = 1;
-        b = (p2.x - p1.x) / (p1.y - p2.y);
-        c = - p1.x - b * p1.y;
-    }
-    return { a: a, b: b, c: c };
-}
-
-function distanceBetweenPointAndLine(lineEquationParameter, p) {
-    return Math.abs(lineEquationParameter.a * p.x +
-        lineEquationParameter.b * p.y +
-        lineEquationParameter.c) /
-    (lineEquationParameter.a ** 2 + lineEquationParameter.b ** 2) ** (1 / 2);
-}
-
-function isIntoOpponentGoal(startPoint, goalPoint) {
-    const lineEquationParameter = calculateLineEquationParamter(startPoint, goalPoint);
-    const distance = distanceBetweenPointAndLine(lineEquationParameter, opponentGoalPoint);
-    return distance <= goalRadius;
-}
-
-function isIntoMyGoal(startPoint, goalPoint) {
-    const lineEquationParameter = calculateLineEquationParamter(startPoint, goalPoint);
-    const distance = distanceBetweenPointAndLine(lineEquationParameter, myGoalPoint);
-    return distance <= goalRadius;
+function didCollideLineSegmentAndCircle(lineSegmentPoint1, lineSegmentPoint2, centerPoint, circleRadius){
+    const lineSegmentVector = vectorP2ToP1(lineSegmentPoint1, lineSegmentPoint2);
+    const lineSegmentUnitVector = lineSegmentVector.unitVector;
+    const vectorPoint1ToCenter = vectorP2ToP1(lineSegmentPoint1, centerPoint);
+    if (Math.abs(crossProduct(lineSegmentUnitVector, vectorPoint1ToCenter)) > circleRadius) return false;
+    const vectorPoint2ToCenter = vectorP2ToP1(lineSegmentPoint2, centerPoint);
+    if (innerProduct(lineSegmentVector, vectorPoint1ToCenter) *
+        innerProduct(lineSegmentVector, vectorPoint2ToCenter) <= 0) return true;
+    return vectorPoint1ToCenter.norm <= circleRadius || vectorPoint2ToCenter.norm <= circleRadius;
 }
 
 function isIntoOpponentGoalFirst(startPoint, endPoint) {
     for (let i = 0; i < trajectoryNumber; i++) {
         const collisionPoint =
             calculateCollisionPoint(startPoint, endPoint);
-        if (isIntoMyGoal(startPoint, collisionPoint)) return false;
-        if (isIntoOpponentGoal(startPoint, collisionPoint)) return true;
+        const isIntoOpponentGoal = 
+            didCollideLineSegmentAndCircle(startPoint, collisionPoint, opponentGoalPoint, goalRadius);
+        const isIntoMyGoal = 
+            didCollideLineSegmentAndCircle(startPoint, collisionPoint, myGoalPoint, goalRadius);
+        if (isIntoOpponentGoal && isIntoMyGoal) {
+            return distanceOfTwoPoints(startPoint, opponentGoalPoint) < distanceOfTwoPoints(startPoint, myGoalPoint);
+        }
+        if (isIntoOpponentGoal) return true;
+        if (isIntoMyGoal) return false;
         endPoint = calculateNextEndPoint(startPoint, collisionPoint);
         startPoint = collisionPoint;
     }
@@ -378,6 +371,22 @@ function deleteNoticeLine() {
 
 function getBallPoint() {
     return new Point(Number(ball.attr("cx")), Number(ball.attr("cy")));
+}
+
+function pointAddedAsVector(p1, p2) {
+    return new Point(p1.x + p2.x, p1.y + p2.y);
+}
+
+function vectorP2ToP1(p1, p2) {
+    return new Point(p2.x - p1.x, p2.y - p1.y);
+}
+
+function crossProduct(p1, p2) {
+    return p1.x * p2.y - p2.x * p1.y;
+}
+
+function innerProduct(p1, p2) {
+    return p1.x * p2.x + p1.y * p2.y;
 }
 
 let derectionPosition = {
