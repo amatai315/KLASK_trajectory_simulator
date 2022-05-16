@@ -228,18 +228,15 @@ function calculateCollisionPoint(x1, y1, x2, y2) {
     }
 }
 
-function calculateNextEndPoint(x1, y1, x2, y2) {
-    if (x2 == ballCollisionLeft || x2 == ballCollisionRight) {
-        return {
-            x: x1 * coefficientOfRestitutionBetweenBallAndWall +
-                x2 * (1 - coefficientOfRestitutionBetweenBallAndWall),
-            y: 2 * y2 - y1
-        };
+function calculateNextEndPoint(startPoint, endPoint) {
+    if (endPoint.x == ballCollisionLeft || endPoint.x == ballCollisionRight) {
+        return new Point(startPoint.x * coefficientOfRestitutionBetweenBallAndWall +
+            endPoint.x * (1 - coefficientOfRestitutionBetweenBallAndWall),
+            2 * endPoint.y - startPoint.y);
     }
-    return {
-        x: 2 * x2 - x1, y: y1 * coefficientOfRestitutionBetweenBallAndWall +
-            y2 * (1 - coefficientOfRestitutionBetweenBallAndWall)
-    };
+    return new Point(2 * endPoint.x - startPoint.x,
+        startPoint.y * coefficientOfRestitutionBetweenBallAndWall +
+        endPoint.y * (1 - coefficientOfRestitutionBetweenBallAndWall));
 }
 
 function drawAllTrajectory(x1, y1, x2, y2) {
@@ -250,8 +247,7 @@ function drawAllTrajectory(x1, y1, x2, y2) {
             calculateCollisionPoint(startPoint.x, startPoint.y,
                 endPoint.x, endPoint.y);
         drawTrajectory(startPoint.x, startPoint.y, collisionPoint.x, collisionPoint.y);
-        endPoint = calculateNextEndPoint(startPoint.x, startPoint.y,
-            collisionPoint.x, collisionPoint.y);
+        endPoint = calculateNextEndPoint(startPoint, collisionPoint);
         startPoint = { x: collisionPoint.x, y: collisionPoint.y };
     } 
 }
@@ -348,8 +344,7 @@ function isIntoOpponentGoalFirst(startPoint, endPoint) {
                 endPoint.x, endPoint.y);
         if (isIntoMyGoal(startPoint, collisionPoint)) return false;
         if (isIntoOpponentGoal(startPoint, collisionPoint)) return true;
-        endPoint = calculateNextEndPoint(startPoint.x, startPoint.y,
-            collisionPoint.x, collisionPoint.y);
+        endPoint = calculateNextEndPoint(startPoint, collisionPoint);
         startPoint = collisionPoint;
     }
     return false;
