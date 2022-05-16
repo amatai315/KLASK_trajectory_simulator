@@ -39,6 +39,8 @@ class Point {
 
 const ballInitialPosition = new Point( boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
 const derectionDeciderRadius = ballRadius * 5;
+const myGoalPoint = new Point(boardCenterX, boardCenterY + goalBoardCenterInterval);
+const opponentGoalPoint = new Point(boardCenterX, boardCenterY - goalBoardCenterInterval);
 
 const trajectoryNumber = 5;
 const coefficientOfRestitutionBetweenBallAndWall = 0.8;
@@ -83,14 +85,14 @@ const biscuit_circle_right = canvas
     .attr("fill", "rgba(0,0,0,0)");
 const my_goal = canvas
     .append("circle")
-    .attr("cx", boardCenterX)
-    .attr("cy", boardCenterY + goalBoardCenterInterval)
+    .attr("cx", myGoalPoint.x)
+    .attr("cy", myGoalPoint.y)
     .attr("r", goalRadius)
     .attr("fill", "rgb(100,150,256)");
 const opponent_goal = canvas
     .append("circle")
-    .attr("cx", boardCenterX)
-    .attr("cy", boardCenterY - goalBoardCenterInterval)
+    .attr("cx", opponentGoalPoint.x)
+    .attr("cy", opponentGoalPoint.y)
     .attr("r", goalRadius)
     .attr("fill", "rgb(100,150,256)");
 const my_service_area_left = canvas
@@ -327,13 +329,13 @@ function distanceBetweenPointAndLine(lineEquationParameter, x1, y1) {
 
 function isIntoOpponentGoal(startPoint, goalPoint) {
     const lineEquationParameter = calculateLineEquationParamter(startPoint, goalPoint);
-    const distance = distanceBetweenPointAndLine(lineEquationParameter, boardCenterX, boardCenterY - goalBoardCenterInterval);
+    const distance = distanceBetweenPointAndLine(lineEquationParameter, opponentGoalPoint.x, opponentGoalPoint.y);
     return distance <= goalRadius;
 }
 
 function isIntoMyGoal(startPoint, goalPoint) {
     const lineEquationParameter = calculateLineEquationParamter(startPoint, goalPoint);
-    const distance = distanceBetweenPointAndLine(lineEquationParameter, boardCenterX, boardCenterY + goalBoardCenterInterval);
+    const distance = distanceBetweenPointAndLine(lineEquationParameter, myGoalPoint.x, myGoalPoint.y);
     return distance <= goalRadius;
 }
 
