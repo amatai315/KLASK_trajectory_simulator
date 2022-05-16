@@ -36,6 +36,13 @@ const derectionDeciderRadius = ballRadius * 5;
 const trajectoryNumber = 5;
 const coefficientOfRestitutionBetweenBallAndWall = 0.8;
 
+class Point {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
 const canvas = d3
     .select("body")
     .append("svg")
@@ -147,7 +154,8 @@ const ball = canvas
     .call(
         d3.drag()
             .on("drag", (event) => {
-                if (!isInboard(event.x, event.y)) return;
+                const ballPosition = new Point(event.x, event.y);
+                if (!isInboard(ballPosition)) return;
                 deleteTrajectory();
                 deleteHandle();
                 deleteNoticeLine();
@@ -197,8 +205,8 @@ function isInboardX(x) {
     return ballCollisionLeft <= x && x <= ballCollisionRight;
 }
 
-function isInboard(x, y) {
-    return isInboardX(x) && isInboardY(y);
+function isInboard(p) {
+    return isInboardX(p.x) && isInboardY(p.y);
 }
 
 function calculateCollisionPoint(x1, y1, x2, y2) {
