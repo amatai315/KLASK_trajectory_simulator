@@ -168,7 +168,7 @@ const ball = canvas
                     .attr("cy", event.y);
                 drawAllTrajectory(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
                 drawHandle(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
-                drawAllNoticeLine(event.x, event.y);
+                drawAllNoticeLine(ballPosition);
             })
 );
 //remove commentout to adjust coefficient
@@ -365,16 +365,15 @@ function drawNoticeLine(p1, p2) {
     .attr("stroke", "rgb(256,0,0)");
 }
 
-function drawAllNoticeLine(x1, y1) {
+function drawAllNoticeLine(ballPosition) {
     const angleDevide = 1800;
     for (let i = 0; i < angleDevide; i++){
         const angle = i / angleDevide * 2 * Math.PI;
-        const ballPosition = new Point(x1, y1);
         const destnationPotision =
-            new Point(x1 + derectionDeciderRadius * Math.cos(angle),
-                y1 + derectionDeciderRadius * Math.sin(angle));
-        if (isIntoOpponentGoalFirst(x1, y1,
-            x1 + Math.cos(angle), y1 + Math.sin(angle))) {
+            new Point(ballPosition.x + derectionDeciderRadius * Math.cos(angle),
+                ballPosition.y + derectionDeciderRadius * Math.sin(angle));
+        if (isIntoOpponentGoalFirst(ballPosition.x, ballPosition.y,
+            ballPosition.x + Math.cos(angle), ballPosition.y + Math.sin(angle))) {
             drawNoticeLine(ballPosition, destnationPotision);
         }
     }
@@ -393,4 +392,4 @@ drawAllTrajectory(ballInitialPosition.x, ballInitialPosition.y,
     ballInitialPosition.x + derectionPosition.x, ballInitialPosition.y + derectionPosition.y);
 drawHandle(ballInitialPosition.x, ballInitialPosition.y,
     ballInitialPosition.x + derectionPosition.x, ballInitialPosition.y + derectionPosition.y);
-drawAllNoticeLine(ballInitialPosition.x, ballInitialPosition.y);
+drawAllNoticeLine(ballInitialPosition);
