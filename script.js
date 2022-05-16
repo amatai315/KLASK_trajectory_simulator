@@ -303,19 +303,19 @@ function deleteHandle() {
     d3.selectAll(".handle").remove()
 }
 
-function calculateLineEquationParamter(x1, y1, x2, y2) {
-    if (x1 == x2) {
+function calculateLineEquationParamter(p1, p2) {
+    if (p1.x == p2.x) {
         a = 1;
         b = 0;
-        c = - x1;
-    } else if (y1 == y2) {
+        c = - p1.x;
+    } else if (p1.y == p2.y) {
         a = 0;
         b = 1;
-        c = - y1;
+        c = - p1.y;
     } else {
         a = 1;
-        b = (x2 - x1) / (y1 - y2);
-        c = - x1 - b * y1;
+        b = (p2.x - p1.x) / (p1.y - p2.y);
+        c = - p1.x - b * p1.y;
     }
     return { a: a, b: b, c: c };
 }
@@ -328,13 +328,17 @@ function distanceBetweenPointAndLine(lineEquationParameter, x1, y1) {
 }
 
 function isIntoOpponentGoal(x1, y1, x2, y2) {
-    const lineEquationParameter = calculateLineEquationParamter(x1, y1, x2, y2);
+    const startPoint = new Point(x1, y1);
+    const goalPoint = new Point(x2, y2);
+    const lineEquationParameter = calculateLineEquationParamter(startPoint, goalPoint);
     const distance = distanceBetweenPointAndLine(lineEquationParameter, boardCenterX, boardCenterY - goalBoardCenterInterval);
     return distance <= goalRadius;
 }
 
 function isIntoMyGoal(x1, y1, x2, y2) {
-    const lineEquationParameter = calculateLineEquationParamter(x1, y1, x2, y2);
+    const startPoint = new Point(x1, y1);
+    const goalPoint = new Point(x2, y2);
+    const lineEquationParameter = calculateLineEquationParamter(startPoint, goalPoint);
     const distance = distanceBetweenPointAndLine(lineEquationParameter, boardCenterX, boardCenterY + goalBoardCenterInterval);
     return distance <= goalRadius;
 }
