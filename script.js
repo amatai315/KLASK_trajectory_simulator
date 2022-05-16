@@ -188,13 +188,13 @@ const ball = canvas
 //             Number(ball.attr("cy"))+ derectionPosition.y)
 //     });
 
-function drawTrajectory(startPointX, startPointY, goalPointX, goalPointY) {
+function drawTrajectory(p1, p2) {
     canvas.append("line")
         .attr("class", "trajectory")
-        .attr("x1", startPointX)
-        .attr("y1", startPointY)
-        .attr("x2", goalPointX)
-        .attr("y2", goalPointY)
+        .attr("x1", p1.x)
+        .attr("y1", p1.y)
+        .attr("x2", p2.x)
+        .attr("y2", p2.y)
         .attr("stroke", "rgb(30,230,30)");
 }
 
@@ -248,7 +248,7 @@ function drawAllTrajectory(x1, y1, x2, y2) {
         const collisionPoint =
             calculateCollisionPoint(startPoint.x, startPoint.y,
                 endPoint.x, endPoint.y);
-        drawTrajectory(startPoint.x, startPoint.y, collisionPoint.x, collisionPoint.y);
+        drawTrajectory(startPoint, collisionPoint);
         endPoint = calculateNextEndPoint(startPoint, collisionPoint);
         startPoint = { x: collisionPoint.x, y: collisionPoint.y };
     } 
