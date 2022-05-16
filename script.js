@@ -153,8 +153,7 @@ const derectionDecider = canvas
                 const eventPoint = new Point(event.x, event.y);
                 drawAllTrajectory(ballPoint, eventPoint);
                 drawHandle(ballPoint, eventPoint);
-                derectionPosition.x = eventPoint.x - ballPoint.x;
-                derectionPosition.y = eventPoint.y - ballPoint.y;
+                derectionPosition = vectorP2ToP1(ballPoint, eventPoint);
             })
     );
 const ball = canvas
@@ -174,7 +173,7 @@ const ball = canvas
                 deleteTrajectory();
                 deleteHandle();
                 deleteNoticeLine();
-                const destnationPotision = new Point(event.x + derectionPosition.x, event.y + derectionPosition.y);
+                const destnationPotision = pointAddedAsVector(ballPoint, derectionPosition);
                 ball.attr("cx", ballPoint.x)
                     .attr("cy", ballPoint.y);
                 derectionDecider
@@ -263,7 +262,7 @@ function drawAllTrajectory(startPoint, endPoint) {
             calculateCollisionPoint(startPoint, endPoint);
         drawTrajectory(startPoint, collisionPoint);
         endPoint = calculateNextEndPoint(startPoint, collisionPoint);
-        startPoint = { x: collisionPoint.x, y: collisionPoint.y };
+        startPoint = new Point(collisionPoint.x, collisionPoint.y)
     } 
 }
 
@@ -274,10 +273,8 @@ function distanceOfTwoPoints(p1, p2) {
 function calculatePositionOfHandle(startPoint, endPoint) {
     const magnification = derectionDeciderRadius /
         distanceOfTwoPoints(startPoint, endPoint);
-    return {
-        x: startPoint.x + (endPoint.x - startPoint.x) * magnification,
-        y: startPoint.y + (endPoint.y - startPoint.y) * magnification
-    };
+    return new Point(startPoint.x + (endPoint.x - startPoint.x) * magnification,
+        startPoint.y + (endPoint.y - startPoint.y) * magnification);
 }
 
 function drawHandle(startPoint, endPoint) {
@@ -303,8 +300,7 @@ function drawHandle(startPoint, endPoint) {
                     handle
                         .attr("cx", potisionOfHandle.x)
                         .attr("cy", potisionOfHandle.y);
-                    derectionPosition.x = eventPoint.x - ballPoint.x;
-                    derectionPosition.y = eventPoint.y - ballPoint.y;
+                    derectionPosition = vectorP2ToP1(ballPoint, eventPoint);
         }))
 }
 
@@ -389,12 +385,9 @@ function innerProduct(p1, p2) {
     return p1.x * p2.x + p1.y * p2.y;
 }
 
-let derectionPosition = {
-    x: boardWidth * 0.4,
-    y: - boardHeight * 0.3
-};
+let derectionPosition = new Point(boardWidth * 0.4, -boardHeight * 0.3);
 
-const initialDestinationPosition = new Point(ballInitialPosition.x + derectionPosition.x, ballInitialPosition.y + derectionPosition.y);
+const initialDestinationPosition = pointAddedAsVector(ballInitialPosition, derectionPosition);
 
 drawAllTrajectory(ballInitialPosition, initialDestinationPosition);
 drawHandle(ballInitialPosition, initialDestinationPosition);
