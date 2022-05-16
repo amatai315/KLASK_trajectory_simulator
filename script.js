@@ -30,18 +30,20 @@ const ballCollisionRight = offset + boardWidth - ballRadius;
 const ballCollisionTop = offset + ballRadius;
 const ballCollisionBottom = offset + boardHeight - ballRadius;
 
-const ballInitialPosition = { x: boardCenterX - boardWidth * 0.2, y: offset + boardHeight * 0.7 };
-const derectionDeciderRadius = ballRadius * 5;
-
-const trajectoryNumber = 5;
-const coefficientOfRestitutionBetweenBallAndWall = 0.8;
-
 class Point {
     constructor(x, y) {
         this.x = x;
         this.y = y;
     }
 }
+
+const ballInitialPosition = new Point( boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
+const derectionDeciderRadius = ballRadius * 5;
+
+const trajectoryNumber = 5;
+const coefficientOfRestitutionBetweenBallAndWall = 0.8;
+
+
 
 const canvas = d3
     .select("body")
