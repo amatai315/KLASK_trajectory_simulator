@@ -140,10 +140,8 @@ const derectionDecider = canvas
                 deleteHandle();
                 const ballPoint = new Point(Number(ball.attr("cx")), Number(ball.attr("cy")))
                 const eventPoint = new Point(event.x, event.y);
-                const ballX = Number(ball.attr("cx"));
-                const ballY = Number(ball.attr("cy"));
                 drawAllTrajectory(ballPoint, eventPoint);
-                drawHandle(ballX, ballY, event.x, event.y)
+                drawHandle(ballPoint, eventPoint);
                 derectionPosition.x = eventPoint.x - ballPoint.x;
                 derectionPosition.y = eventPoint.y - ballPoint.y;
             })
@@ -173,7 +171,7 @@ const ball = canvas
                     .attr("cx", ballPoint.x)
                     .attr("cy", ballPoint.y);
                 drawAllTrajectory(ballPoint, destnationPotision);
-                drawHandle(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
+                drawHandle(ballPoint, destnationPotision);
                 drawAllNoticeLine(ballPosition);
             })
 );
@@ -272,9 +270,7 @@ function calculatePositionOfHandle(startPoint, endPoint) {
     };
 }
 
-function drawHandle(x1, y1, x2, y2) {
-    const startPoint = new Point(x1, y1);
-    const endPoint = new Point(x2, y2);
+function drawHandle(startPoint, endPoint) {
     const potisionOfHandle = calculatePositionOfHandle(startPoint, endPoint);
     const handle = canvas.append("circle")
         .attr("class", "handle")
@@ -389,6 +385,5 @@ let derectionPosition = {
 const initialDestinationPosition = new Point(ballInitialPosition.x + derectionPosition.x, ballInitialPosition.y + derectionPosition.y);
 
 drawAllTrajectory(ballInitialPosition, initialDestinationPosition);
-drawHandle(ballInitialPosition.x, ballInitialPosition.y,
-    ballInitialPosition.x + derectionPosition.x, ballInitialPosition.y + derectionPosition.y);
+drawHandle(ballInitialPosition, initialDestinationPosition);
 drawAllNoticeLine(ballInitialPosition);
