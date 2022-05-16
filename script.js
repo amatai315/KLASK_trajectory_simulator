@@ -333,9 +333,7 @@ function isIntoOpponentGoal(startPoint, goalPoint) {
     return distance <= goalRadius;
 }
 
-function isIntoMyGoal(x1, y1, x2, y2) {
-    const startPoint = new Point(x1, y1);
-    const goalPoint = new Point(x2, y2);
+function isIntoMyGoal(startPoint, goalPoint) {
     const lineEquationParameter = calculateLineEquationParamter(startPoint, goalPoint);
     const distance = distanceBetweenPointAndLine(lineEquationParameter, boardCenterX, boardCenterY + goalBoardCenterInterval);
     return distance <= goalRadius;
@@ -348,7 +346,7 @@ function isIntoOpponentGoalFirst(x1, y1, x2, y2) {
         const collisionPoint =
             calculateCollisionPoint(startPoint.x, startPoint.y,
                 endPoint.x, endPoint.y);
-        if (isIntoMyGoal(startPoint.x, startPoint.y, collisionPoint.x, collisionPoint.y)) return false;
+        if (isIntoMyGoal(startPoint, collisionPoint)) return false;
         if (isIntoOpponentGoal(startPoint, collisionPoint)) return true;
         endPoint = calculateNextEndPoint(startPoint.x, startPoint.y,
             collisionPoint.x, collisionPoint.y);
