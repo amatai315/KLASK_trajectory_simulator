@@ -260,9 +260,7 @@ function distanceOfTwoPoints(x1, y1, x2, y2) {
     return ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** (1 / 2);
 }
 
-function calculatePositionOfHandle(x1, y1, x2, y2) {
-    const startPoint = { x: x1, y: y1 };
-    const endPoint = { x: x2, y: y2 };
+function calculatePositionOfHandle(startPoint, endPoint) {
     const magnification = derectionDeciderRadius /
         distanceOfTwoPoints(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
     return {
@@ -272,7 +270,9 @@ function calculatePositionOfHandle(x1, y1, x2, y2) {
 }
 
 function drawHandle(x1, y1, x2, y2) {
-    const potisionOfHandle = calculatePositionOfHandle(x1, y1, x2, y2);
+    const startPoint = new Point(x1, y1);
+    const endPoint = new Point(x2, y2);
+    const potisionOfHandle = calculatePositionOfHandle(startPoint, endPoint);
     const handle = canvas.append("circle")
         .attr("class", "handle")
         .attr("cx", potisionOfHandle.x)
@@ -285,17 +285,19 @@ function drawHandle(x1, y1, x2, y2) {
         .call(
             d3.drag()
                 .on("drag", (event) => {
-                deleteTrajectory();
-                const ballX = Number(ball.attr("cx"));
-                const ballY = Number(ball.attr("cy"));
-                drawAllTrajectory(ballX, ballY, event.x, event.y);
-                const potisionOfHandle =
-                    calculatePositionOfHandle(ballX, ballY, event.x, event.y);
-                handle
-                    .attr("cx", potisionOfHandle.x)
-                    .attr("cy", potisionOfHandle.y);
-                derectionPosition.x = event.x - ballX;
-                derectionPosition.y = event.y - ballY;
+                    deleteTrajectory();
+                    const ballPoint = new Point(Number(ball.attr("cx")), Number(ball.attr("cy")));
+                    const eventPoint = new Point(event.x, event.y);
+                    const ballX = Number(ball.attr("cx"));
+                    const ballY = Number(ball.attr("cy"));
+                    drawAllTrajectory(ballX, ballY, event.x, event.y);
+                    const potisionOfHandle =
+                        calculatePositionOfHandle(ballPoint, eventPoint);
+                    handle
+                        .attr("cx", potisionOfHandle.x)
+                        .attr("cy", potisionOfHandle.y);
+                    derectionPosition.x = event.x - ballX;
+                    derectionPosition.y = event.y - ballY;
         }))
 }
 
