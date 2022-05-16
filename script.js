@@ -353,13 +353,13 @@ function isIntoOpponentGoalFirst(x1, y1, x2, y2) {
     return false;
 }
 
-function drawNoticeLine(startPointX, startPointY, goalPointX, goalPointY) {
+function drawNoticeLine(p1, p2) {
     canvas.insert("line", ":nth-child(11)")
     .attr("class", "notice-line")
-    .attr("x1", startPointX)
-    .attr("y1", startPointY)
-    .attr("x2", goalPointX)
-    .attr("y2", goalPointY)
+    .attr("x1", p1.x)
+    .attr("y1", p1.y)
+    .attr("x2", p2.x)
+    .attr("y2", p2.y)
     .attr("stroke", "rgb(256,0,0)");
 }
 
@@ -367,9 +367,13 @@ function drawAllNoticeLine(x1, y1) {
     const angleDevide = 1800;
     for (let i = 0; i < angleDevide; i++){
         const angle = i / angleDevide * 2 * Math.PI;
+        const ballPosition = new Point(x1, y1);
+        const destnationPotision =
+            new Point(x1 + derectionDeciderRadius * Math.cos(angle),
+                y1 + derectionDeciderRadius * Math.sin(angle));
         if (isIntoOpponentGoalFirst(x1, y1,
             x1 + Math.cos(angle), y1 + Math.sin(angle))) {
-            drawNoticeLine(x1, y1, x1 + derectionDeciderRadius * Math.cos(angle), y1 + derectionDeciderRadius * Math.sin(angle))
+            drawNoticeLine(ballPosition, destnationPotision);
         }
     }
 }
