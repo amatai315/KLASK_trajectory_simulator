@@ -50,6 +50,7 @@ class Point {
 
 const ballInitialPoint = new Point( boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
 const derectionDeciderRadius = ballRadius * 5;
+const handleRadius = ballRadius * 2;
 const myGoalPoint = new Point(boardCenterX, boardCenterY + goalBoardCenterInterval);
 const opponentGoalPoint = new Point(boardCenterX, boardCenterY - goalBoardCenterInterval);
 
@@ -283,10 +284,10 @@ function drawHandle(startPoint, endPoint) {
         .attr("class", "handle")
         .attr("cx", pointOfHandle.x)
         .attr("cy", pointOfHandle.y)
-        .attr("r", 10)
+        .attr("r", handleRadius)
         .attr("fill", "rgba(30,230,30)")
         .attr("stroke", "white")
-        .attr("stroke-width", 2)
+        .attr("stroke-width", handleRadius / 8)
         .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
         .call(
             d3.drag()
