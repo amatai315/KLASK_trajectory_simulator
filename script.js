@@ -291,6 +291,25 @@ function deleteHandle() {
     d3.selectAll(".handle").remove()
 }
 
+function isIntoOpponentGoal(x1, y1, x2, y2) {
+    let a, b, c;
+    if (x1 == x2) {
+        a = 1;
+        b = 0;
+        c = - x1;
+    } else if (y1 == y2) {
+        a = 0;
+        b = 1;
+        c = - y1;
+    } else {
+        a = 1;
+        b = (x2 - x1) / (y1 - y2);
+        c = -x1 - b * y1;
+    }
+    const distance = Math.abs(a * boardCenterX + b * (boardCenterY - goalBoardCenterInterval) + c) / (a ** 2 + b ** 2) ** (1/2);
+    return distance <= goalRadius;
+}
+
 let derectionPosition = {
     x: boardWidth * 0.4,
     y: - boardHeight * 0.3
