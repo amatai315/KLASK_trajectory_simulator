@@ -256,13 +256,13 @@ function drawAllTrajectory(x1, y1, x2, y2) {
     } 
 }
 
-function distanceOfTwoPoints(x1, y1, x2, y2) {
-    return ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** (1 / 2);
+function distanceOfTwoPoints(p1, p2) {
+    return ((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2) ** (1 / 2);
 }
 
 function calculatePositionOfHandle(startPoint, endPoint) {
     const magnification = derectionDeciderRadius /
-        distanceOfTwoPoints(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+        distanceOfTwoPoints(startPoint, endPoint);
     return {
         x: startPoint.x + (endPoint.x - startPoint.x) * magnification,
         y: startPoint.y + (endPoint.y - startPoint.y) * magnification
