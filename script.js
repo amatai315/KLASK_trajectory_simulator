@@ -257,7 +257,6 @@ function calculatePositionOfHandle(x1, y1, x2, y2) {
 
 function drawHandle(x1, y1, x2, y2) {
     const potisionOfHandle = calculatePositionOfHandle(x1, y1, x2, y2);
-    console.log(potisionOfHandle);
     const handle = canvas.append("circle")
         .attr("class", "handle")
         .attr("cx", potisionOfHandle.x)
