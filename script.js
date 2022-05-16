@@ -213,20 +213,24 @@ function isInboard(p) {
     return isInboardX(p.x) && isInboardY(p.y);
 }
 
-function calculateCollisionPoint(x1, y1, x2, y2) {
+function calculateCollisionPoint(startPoint, endPoint) {
+    const x1 = startPoint.x;
+    const y1 = startPoint.y;
+    const x2 = endPoint.x;
+    const y2 = endPoint.y;
     if (x1 < x2) {
         let collisionY = y1 + (ballCollisionRight - x1) * (y2 - y1) / (x2 - x1);
-        if (isInboardY(collisionY)) return { x: ballCollisionRight, y: collisionY };
+        if (isInboardY(collisionY)) return new Point(ballCollisionRight, collisionY);
     } else if (x2 < x1) {
         let collisionY = y1 + (ballCollisionLeft - x1) * (y2 - y1) / (x2 - x1);
-        if (isInboardY(collisionY)) return { x: ballCollisionLeft, y: collisionY };
+        if (isInboardY(collisionY)) return new Point(ballCollisionLeft, collisionY);
     } else {
-        return y1 > y2 ? { x: x1, y: ballCollisionTop } : { x: x1, y: ballCollisionBottom };
+        return y1 > y2 ? new Point(x1, ballCollisionTop) : new Point(x1, ballCollisionBottom);
     }
     if (y1 < y2) {
-        return { x: (ballCollisionBottom - y1) * (x2 - x1) / (y2 - y1) + x1, y: ballCollisionBottom };
+        return new Point((ballCollisionBottom - y1) * (x2 - x1) / (y2 - y1) + x1, ballCollisionBottom);
     } else {
-        return { x: (ballCollisionTop - y1) * (x2 - x1) / (y2 - y1) + x1, y: ballCollisionTop };
+        return new Point((ballCollisionTop - y1) * (x2 - x1) / (y2 - y1) + x1, ballCollisionTop);
     }
 }
 
@@ -246,8 +250,7 @@ function drawAllTrajectory(x1, y1, x2, y2) {
     let endPoint = { x: x2, y: y2 };
     for (let i = 0; i < trajectoryNumber; i++) {
         const collisionPoint =
-            calculateCollisionPoint(startPoint.x, startPoint.y,
-                endPoint.x, endPoint.y);
+            calculateCollisionPoint(startPoint, endPoint);
         drawTrajectory(startPoint, collisionPoint);
         endPoint = calculateNextEndPoint(startPoint, collisionPoint);
         startPoint = { x: collisionPoint.x, y: collisionPoint.y };
@@ -342,8 +345,7 @@ function isIntoMyGoal(startPoint, goalPoint) {
 function isIntoOpponentGoalFirst(startPoint, endPoint) {
     for (let i = 0; i < trajectoryNumber; i++) {
         const collisionPoint =
-            calculateCollisionPoint(startPoint.x, startPoint.y,
-                endPoint.x, endPoint.y);
+            calculateCollisionPoint(startPoint, endPoint);
         if (isIntoMyGoal(startPoint, collisionPoint)) return false;
         if (isIntoOpponentGoal(startPoint, collisionPoint)) return true;
         endPoint = calculateNextEndPoint(startPoint, collisionPoint);
