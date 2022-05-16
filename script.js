@@ -147,7 +147,7 @@ const ball = canvas
     .call(
         d3.drag()
             .on("drag", (event) => {
-                if (!isInboardX(event.x) || !isInboardY(event.y)) return;
+                if (!isInboard(event.x, event.y)) return;
                 deleteTrajectory();
                 deleteHandle();
                 ball.attr("cx", event.x)
@@ -193,6 +193,10 @@ function isInboardY(y) {
 }
 function isInboardX(x) {
     return ballCollisionLeft <= x && x <= ballCollisionRight;
+}
+
+function isInboard(x, y) {
+    return isInboardX(x) && isInboardY(y);
 }
 
 function calculateCollisionPoint(x1, y1, x2, y2) {
