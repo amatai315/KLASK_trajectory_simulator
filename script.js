@@ -150,6 +150,7 @@ const ball = canvas
                 if (!isInboard(event.x, event.y)) return;
                 deleteTrajectory();
                 deleteHandle();
+                deleteNoticeLine();
                 ball.attr("cx", event.x)
                     .attr("cy", event.y);
                 derectionDecider
@@ -157,6 +158,7 @@ const ball = canvas
                     .attr("cy", event.y);
                 drawAllTrajectory(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
                 drawHandle(event.x, event.y, event.x + derectionPosition.x, event.y + derectionPosition.y);
+                drawAllNoticeLine(event.x, event.y);
             })
 );
 //remove commentout to adjust coefficient
@@ -291,8 +293,7 @@ function deleteHandle() {
     d3.selectAll(".handle").remove()
 }
 
-function isIntoOpponentGoal(x1, y1, x2, y2) {
-    let a, b, c;
+function calculateLineEquationParamter(x1, y1, x2, y2) {
     if (x1 == x2) {
         a = 1;
         b = 0;
@@ -304,10 +305,69 @@ function isIntoOpponentGoal(x1, y1, x2, y2) {
     } else {
         a = 1;
         b = (x2 - x1) / (y1 - y2);
-        c = -x1 - b * y1;
+        c = - x1 - b * y1;
     }
-    const distance = Math.abs(a * boardCenterX + b * (boardCenterY - goalBoardCenterInterval) + c) / (a ** 2 + b ** 2) ** (1/2);
+    return { a: a, b: b, c: c };
+}
+
+function distanceBetweenPointAndLine(lineEquationParameter, x1, y1) {
+    return Math.abs(lineEquationParameter.a * x1 +
+        lineEquationParameter.b * y1 +
+        lineEquationParameter.c) /
+    (lineEquationParameter.a ** 2 + lineEquationParameter.b ** 2) ** (1 / 2);
+}
+
+function isIntoOpponentGoal(x1, y1, x2, y2) {
+    const lineEquationParameter = calculateLineEquationParamter(x1, y1, x2, y2);
+    const distance = distanceBetweenPointAndLine(lineEquationParameter, boardCenterX, boardCenterY - goalBoardCenterInterval);
     return distance <= goalRadius;
+}
+
+function isIntoMyGoal(x1, y1, x2, y2) {
+    const lineEquationParameter = calculateLineEquationParamter(x1, y1, x2, y2);
+    const distance = distanceBetweenPointAndLine(lineEquationParameter, boardCenterX, boardCenterY + goalBoardCenterInterval);
+    return distance <= goalRadius;
+}
+
+function isIntoOpponentGoalFirst(x1, y1, x2, y2) {
+    let startPoint = { x: x1, y: y1 };
+    let endPoint = { x: x2, y: y2 };
+    for (let i = 0; i < trajectoryNumber; i++) {
+        const collisionPoint =
+            calculateCollisionPoint(startPoint.x, startPoint.y,
+                endPoint.x, endPoint.y);
+        if (isIntoMyGoal(startPoint.x, startPoint.y, collisionPoint.x, collisionPoint.y)) return false;
+        if (isIntoOpponentGoal(startPoint.x, startPoint.y, collisionPoint.x, collisionPoint.y)) return true;
+        endPoint = calculateNextEndPoint(startPoint.x, startPoint.y,
+            collisionPoint.x, collisionPoint.y);
+        startPoint = { x: collisionPoint.x, y: collisionPoint.y };
+    }
+    return false;
+}
+
+function drawNoticeLine(startPointX, startPointY, goalPointX, goalPointY) {
+    canvas.insert("line", ":nth-child(11)")
+    .attr("class", "notice-line")
+    .attr("x1", startPointX)
+    .attr("y1", startPointY)
+    .attr("x2", goalPointX)
+    .attr("y2", goalPointY)
+    .attr("stroke", "rgb(256,0,0)");
+}
+
+function drawAllNoticeLine(x1, y1) {
+    const angleDevide = 1800;
+    for (let i = 0; i < angleDevide; i++){
+        const angle = i / angleDevide * 2 * Math.PI;
+        if (isIntoOpponentGoalFirst(x1, y1,
+            x1 + Math.cos(angle), y1 + Math.sin(angle))) {
+            drawNoticeLine(x1, y1, x1 + derectionDeciderRadius * Math.cos(angle), y1 + derectionDeciderRadius * Math.sin(angle))
+        }
+    }
+}
+
+function deleteNoticeLine() {
+    d3.selectAll(".notice-line").remove()
 }
 
 let derectionPosition = {
@@ -319,3 +379,4 @@ drawAllTrajectory(ballInitialPosition.x, ballInitialPosition.y,
     ballInitialPosition.x + derectionPosition.x, ballInitialPosition.y + derectionPosition.y);
 drawHandle(ballInitialPosition.x, ballInitialPosition.y,
     ballInitialPosition.x + derectionPosition.x, ballInitialPosition.y + derectionPosition.y);
+drawAllNoticeLine(ballInitialPosition.x, ballInitialPosition.y);
