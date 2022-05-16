@@ -138,7 +138,7 @@ const derectionDecider = canvas
             .on("drag", (event) => {
                 deleteTrajectory();
                 deleteHandle();
-                const ballPoint = new Point(Number(ball.attr("cx")), Number(ball.attr("cy")))
+                const ballPoint = getBallPoint();
                 const eventPoint = new Point(event.x, event.y);
                 drawAllTrajectory(ballPoint, eventPoint);
                 drawHandle(ballPoint, eventPoint);
@@ -158,12 +158,11 @@ const ball = canvas
     .call(
         d3.drag()
             .on("drag", (event) => {
-                const ballPosition = new Point(event.x, event.y);
-                if (!isInboard(ballPosition)) return;
+                const ballPoint = new Point(event.x, event.y);
+                if (!isInboard(ballPoint)) return;
                 deleteTrajectory();
                 deleteHandle();
                 deleteNoticeLine();
-                const ballPoint = new Point(event.x, event.y);
                 const destnationPotision = new Point(event.x + derectionPosition.x, event.y + derectionPosition.y);
                 ball.attr("cx", ballPoint.x)
                     .attr("cy", ballPoint.y);
@@ -172,7 +171,7 @@ const ball = canvas
                     .attr("cy", ballPoint.y);
                 drawAllTrajectory(ballPoint, destnationPotision);
                 drawHandle(ballPoint, destnationPotision);
-                drawAllNoticeLine(ballPosition);
+                drawAllNoticeLine(ballPoint);
             })
 );
 //remove commentout to adjust coefficient
@@ -285,7 +284,7 @@ function drawHandle(startPoint, endPoint) {
             d3.drag()
                 .on("drag", (event) => {
                     deleteTrajectory();
-                    const ballPoint = new Point(Number(ball.attr("cx")), Number(ball.attr("cy")));
+                    const ballPoint = getBallPoint();
                     const eventPoint = new Point(event.x, event.y);
                     drawAllTrajectory(ballPoint, eventPoint);
                     const potisionOfHandle =
@@ -375,6 +374,10 @@ function drawAllNoticeLine(ballPosition) {
 
 function deleteNoticeLine() {
     d3.selectAll(".notice-line").remove()
+}
+
+function getBallPoint() {
+    return new Point(Number(ball.attr("cx")), Number(ball.attr("cy")));
 }
 
 let derectionPosition = {
