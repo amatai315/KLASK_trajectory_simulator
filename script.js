@@ -320,22 +320,22 @@ function calculateLineEquationParamter(p1, p2) {
     return { a: a, b: b, c: c };
 }
 
-function distanceBetweenPointAndLine(lineEquationParameter, x1, y1) {
-    return Math.abs(lineEquationParameter.a * x1 +
-        lineEquationParameter.b * y1 +
+function distanceBetweenPointAndLine(lineEquationParameter, p) {
+    return Math.abs(lineEquationParameter.a * p.x +
+        lineEquationParameter.b * p.y +
         lineEquationParameter.c) /
     (lineEquationParameter.a ** 2 + lineEquationParameter.b ** 2) ** (1 / 2);
 }
 
 function isIntoOpponentGoal(startPoint, goalPoint) {
     const lineEquationParameter = calculateLineEquationParamter(startPoint, goalPoint);
-    const distance = distanceBetweenPointAndLine(lineEquationParameter, opponentGoalPoint.x, opponentGoalPoint.y);
+    const distance = distanceBetweenPointAndLine(lineEquationParameter, opponentGoalPoint);
     return distance <= goalRadius;
 }
 
 function isIntoMyGoal(startPoint, goalPoint) {
     const lineEquationParameter = calculateLineEquationParamter(startPoint, goalPoint);
-    const distance = distanceBetweenPointAndLine(lineEquationParameter, myGoalPoint.x, myGoalPoint.y);
+    const distance = distanceBetweenPointAndLine(lineEquationParameter, myGoalPoint);
     return distance <= goalRadius;
 }
 
