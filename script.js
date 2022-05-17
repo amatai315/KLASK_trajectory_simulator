@@ -280,12 +280,12 @@ function calculatePointOfHandle(startPoint, endPoint) {
 
 function drawHandle(startPoint, endPoint) {
     const pointOfHandle = calculatePointOfHandle(startPoint, endPoint);
-    const handle = canvas.append("circle")
+    const handle = canvas.insert("circle", ":nth-child(12)")
         .attr("class", "handle")
         .attr("cx", pointOfHandle.x)
         .attr("cy", pointOfHandle.y)
         .attr("r", handleRadius)
-        .attr("fill", "rgba(30,230,30)")
+        .attr("fill", "rgba(30,150,30)")
         .attr("stroke", "white")
         .attr("stroke-width", handleRadius / 8)
         .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
