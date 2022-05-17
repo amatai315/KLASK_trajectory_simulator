@@ -147,7 +147,7 @@ const ballDragger = canvas
     .attr("cx", ballInitialPoint.x)
     .attr("cy", ballInitialPoint.y)
     .attr("r", ballDraggerRadius)
-    .attr("fill", "rgba(30,230,30, 0.5)")
+    .attr("fill", "rgba(230,230,30, 0.5)")
     .call(
         d3.drag()
             .on("drag", draggedBall)
@@ -320,7 +320,7 @@ function drawNoticeLine(p1, p2) {
     .attr("y1", p1.y)
     .attr("x2", p2.x)
     .attr("y2", p2.y)
-    .attr("stroke", "rgb(256,0,0)");
+    .attr("stroke", "rgb(256,256,256)");
 }
 
 function drawAllNoticeLine(ballPoint) {
