@@ -202,11 +202,7 @@ const handle = canvas.insert("circle", ":nth-child(12)")
                 const ballPoint = getBallPoint();
                 const eventPoint = new Point(event.x, event.y);
                 drawAllTrajectory(ballPoint, eventPoint);
-                const pointOfHandle =
-                    calculatePointOfHandle(ballPoint, eventPoint);
-                handle
-                    .attr("cx", pointOfHandle.x)
-                    .attr("cy", pointOfHandle.y);
+                placeHandle(calculatePointOfHandle(ballPoint, eventPoint));
                 ballDirectionVector = vectorP2ToP1(ballPoint, eventPoint);
             }));
 //remove commentout to adjust coefficient
