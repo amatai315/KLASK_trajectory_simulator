@@ -59,7 +59,7 @@ let ballDirectionVector = new Point(boardWidth * 0.4, -boardHeight * 0.3);
 const initialDestinationPoint = pointAddedAsVector(ballInitialPoint, ballDirectionVector);
 const initialHandlePoint = calculatePointOfHandle(ballInitialPoint, initialDestinationPoint);
 
-const trajectoryNumber = 5;
+const trajectoryNumber = 4;
 const coefficientOfRestitutionBetweenBallAndWall = 0.8;
 
 const canvas = d3
