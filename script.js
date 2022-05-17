@@ -48,16 +48,19 @@ class Point {
     }
 }
 
-const ballInitialPoint = new Point( boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
-const derectionDeciderRadius = ballRadius * 5;
-const handleRadius = ballRadius * 2;
 const myGoalPoint = new Point(boardCenterX, boardCenterY + goalBoardCenterInterval);
 const opponentGoalPoint = new Point(boardCenterX, boardCenterY - goalBoardCenterInterval);
 
+const derectionDeciderRadius = ballRadius * 5;
+const handleRadius = ballRadius * 2;
+
+const ballInitialPoint = new Point(boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
+let ballDirectionVector = new Point(boardWidth * 0.4, -boardHeight * 0.3);
+const initialDestinationPoint = pointAddedAsVector(ballInitialPoint, ballDirectionVector);
+const initialHandlePoint = calculatePointOfHandle(ballInitialPoint, initialDestinationPoint);
+
 const trajectoryNumber = 5;
 const coefficientOfRestitutionBetweenBallAndWall = 0.8;
-
-
 
 const canvas = d3
     .select("body")
@@ -149,11 +152,10 @@ const derectionDecider = canvas
         d3.drag()
             .on("drag", (event) => {
                 deleteTrajectory();
-                deleteHandle();
                 const ballPoint = getBallPoint();
                 const eventPoint = new Point(event.x, event.y);
                 drawAllTrajectory(ballPoint, eventPoint);
-                drawHandle(ballPoint, eventPoint);
+                placeHandle(calculatePointOfHandle(ballPoint, eventPoint));
                 ballDirectionVector = vectorP2ToP1(ballPoint, eventPoint);
             })
     );
@@ -172,7 +174,6 @@ const ball = canvas
                 const ballPoint = new Point(event.x, event.y);
                 if (!isInboard(ballPoint)) return;
                 deleteTrajectory();
-                deleteHandle();
                 deleteNoticeLine();
                 const destinationPoint = pointAddedAsVector(ballPoint, ballDirectionVector);
                 ball.attr("cx", ballPoint.x)
@@ -181,10 +182,33 @@ const ball = canvas
                     .attr("cx", ballPoint.x)
                     .attr("cy", ballPoint.y);
                 drawAllTrajectory(ballPoint, destinationPoint);
-                drawHandle(ballPoint, destinationPoint);
+                placeHandle(calculatePointOfHandle(ballPoint, destinationPoint));
                 drawAllNoticeLine(ballPoint);
             })
 );
+const handle = canvas.insert("circle", ":nth-child(12)")
+    .attr("class", "handle")
+    .attr("cx", initialHandlePoint.x)
+    .attr("cy", initialHandlePoint.y)
+    .attr("r", handleRadius)
+    .attr("fill", "rgba(30,150,30)")
+    .attr("stroke", "white")
+    .attr("stroke-width", handleRadius / 8)
+    .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
+    .call(
+        d3.drag()
+            .on("drag", (event) => {
+                deleteTrajectory();
+                const ballPoint = getBallPoint();
+                const eventPoint = new Point(event.x, event.y);
+                drawAllTrajectory(ballPoint, eventPoint);
+                const pointOfHandle =
+                    calculatePointOfHandle(ballPoint, eventPoint);
+                handle
+                    .attr("cx", pointOfHandle.x)
+                    .attr("cy", pointOfHandle.y);
+                ballDirectionVector = vectorP2ToP1(ballPoint, eventPoint);
+            }));
 //remove commentout to adjust coefficient
 // const coefficientInput = d3
 //     .select("body")
@@ -278,35 +302,10 @@ function calculatePointOfHandle(startPoint, endPoint) {
         startPoint.y + (endPoint.y - startPoint.y) * magnification);
 }
 
-function drawHandle(startPoint, endPoint) {
-    const pointOfHandle = calculatePointOfHandle(startPoint, endPoint);
-    const handle = canvas.insert("circle", ":nth-child(12)")
-        .attr("class", "handle")
-        .attr("cx", pointOfHandle.x)
-        .attr("cy", pointOfHandle.y)
-        .attr("r", handleRadius)
-        .attr("fill", "rgba(30,150,30)")
-        .attr("stroke", "white")
-        .attr("stroke-width", handleRadius / 8)
-        .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
-        .call(
-            d3.drag()
-                .on("drag", (event) => {
-                    deleteTrajectory();
-                    const ballPoint = getBallPoint();
-                    const eventPoint = new Point(event.x, event.y);
-                    drawAllTrajectory(ballPoint, eventPoint);
-                    const pointOfHandle =
-                        calculatePointOfHandle(ballPoint, eventPoint);
-                    handle
-                        .attr("cx", pointOfHandle.x)
-                        .attr("cy", pointOfHandle.y);
-                    ballDirectionVector = vectorP2ToP1(ballPoint, eventPoint);
-        }))
-}
-
-function deleteHandle() {
-    d3.selectAll(".handle").remove()
+function placeHandle(handlePoint) {
+    handle
+        .attr("cx", handlePoint.x)
+        .attr("cy", handlePoint.y)
 }
 
 function didCollideLineSegmentAndCircle(lineSegmentPoint1, lineSegmentPoint2, centerPoint, circleRadius){
@@ -386,10 +385,5 @@ function innerProduct(p1, p2) {
     return p1.x * p2.x + p1.y * p2.y;
 }
 
-let ballDirectionVector = new Point(boardWidth * 0.4, -boardHeight * 0.3);
-
-const initialDestinationPoint = pointAddedAsVector(ballInitialPoint, ballDirectionVector);
-
 drawAllTrajectory(ballInitialPoint, initialDestinationPoint);
-drawHandle(ballInitialPoint, initialDestinationPoint);
 drawAllNoticeLine(ballInitialPoint);
