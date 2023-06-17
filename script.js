@@ -4,8 +4,9 @@ const realBiscuitRadius = 9 / 2;
 const realBiscuitCircleInterval = 85;
 const realGoalRadius = 37 / 2;
 const realDefferenceBetweenGoalToBoardCenter = (313 + realGoalRadius * 2) / 2;
-const realBallRadius = 14.5 / 2;
+const realBallRadius = 15 / 2;
 const realServiceAreaRadius = 47;
+const coefficientOfRestitutionBetweenBallAndWall = 0.5;
 
 const raitoDisplayToReal = 2;
 
@@ -60,7 +61,6 @@ const initialDestinationPoint = pointAddedAsVector(ballInitialPoint, ballDirecti
 const initialHandlePoint = calculatePointOfHandle(ballInitialPoint, initialDestinationPoint);
 
 const trajectoryNumber = 4;
-const coefficientOfRestitutionBetweenBallAndWall = 0.8;
 
 const canvas = d3
     .select("body")
