@@ -61,6 +61,7 @@ const initialDestinationPoint = pointAddedAsVector(ballInitialPoint, ballDirecti
 const initialHandlePoint = calculatePointOfHandle(ballInitialPoint, initialDestinationPoint);
 
 const trajectoryNumber = 4;
+let displayNoticeArcBackwardShot = false;
 
 const canvas = d3
     .select("#board-svg-wrapper")
@@ -299,7 +300,7 @@ function isIntoOpponentGoalFirst(startPoint, endPoint) {
     for (let i = 0; i < trajectoryNumber; i++) {
         const collisionPoint =
             calculateCollisionPoint(startPoint, endPoint);
-        if (collisionPoint.y == ballCollisionBottom) return false;
+        if (collisionPoint.y == ballCollisionBottom && !displayNoticeArcBackwardShot) return false;
         const isIntoOpponentGoal = 
             didCollideLineSegmentAndCircle(startPoint, collisionPoint, opponentGoalPoint, goalRadius);
         const isIntoMyGoal = 
@@ -425,6 +426,12 @@ function setVer3_0BallCharacteristics() {
     ballRadius = realBallRadius * raitoDisplayToReal;
     ball.attr("r", ballRadius);
     coefficientOfRestitutionBetweenBallAndWall = 0.5;
+    redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
+}
+
+function onclickButtonBackwardShot() {
+    displayNoticeArcBackwardShot = !displayNoticeArcBackwardShot;
+    document.getElementById("button-backward-shot").style.backgroundColor = displayNoticeArcBackwardShot ? "aqua" : "aliceblue";
     redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 }
 
