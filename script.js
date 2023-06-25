@@ -314,31 +314,46 @@ function isIntoOpponentGoalFirst(startPoint, endPoint) {
     return false;
 }
 
-function drawNoticeLine(p1, p2) {
-    canvas.insert("line", ":nth-child(11)")
-    .attr("class", "notice-line")
-    .attr("x1", p1.x)
-    .attr("y1", p1.y)
-    .attr("x2", p2.x)
-    .attr("y2", p2.y)
-    .attr("stroke", "rgb(256,256,256)");
+function drawNoticeArc(p1, p2, ballPoint) {
+    canvas.insert("path", ":nth-child(11)")
+        .attr("class", "notice-arc")
+        .attr("fill", "rgb(256,256,256)")
+        .attr("stroke", "rgb(256,256,256)")
+        .attr("d", `M ${p1.x},${p1.y} 
+        A ${ballDraggerRadius} ${ballDraggerRadius} 0 0 1 ${p2.x},${p2.y}
+        L ${ballPoint.x},${ballPoint.y} z`);
+    console.log(`M ${p1.x},${p1.y} 
+    A ${ballDraggerRadius} ${ballDraggerRadius} 0 0 1 ${p2.x},${p2.y}
+    L ${ballPoint.x},${ballPoint.y} z`)
 }
 
-function drawAllNoticeLine(ballPoint) {
+function drawAllNoticeArc(ballPoint) {
     const angleDevide = 1800;
+    let arcStartPoint = new Point(ballPoint.x + ballDraggerRadius, ballPoint.y);
+    let preIsIntoOpponentGoalFirst = isIntoOpponentGoalFirst(ballPoint, arcStartPoint);
     for (let i = 0; i < angleDevide; i++){
         const angle = i / angleDevide * 2 * Math.PI;
         const destinationPoint =
             new Point(ballPoint.x + ballDraggerRadius * Math.cos(angle),
                 ballPoint.y + ballDraggerRadius * Math.sin(angle));
-        if (isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
-            drawNoticeLine(ballPoint, destinationPoint);
+        if (i % (angleDevide / 4) == 0 && preIsIntoOpponentGoalFirst) {
+            //this condition is needed because arc is drawn as one whose angle is lesser than 180 degrees.
+            drawNoticeArc(arcStartPoint, destinationPoint, ballPoint)
+            arcStartPoint = destinationPoint
+        } else if (preIsIntoOpponentGoalFirst && !isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
+            drawNoticeArc(arcStartPoint, destinationPoint, ballPoint);
+        } else if (!preIsIntoOpponentGoalFirst && isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
+            arcStartPoint = destinationPoint;
         }
+        preIsIntoOpponentGoalFirst = isIntoOpponentGoalFirst(ballPoint, destinationPoint)
+    }
+    if (preIsIntoOpponentGoalFirst) {
+        drawNoticeArc(arcStartPoint, new Point (ballPoint.x + ballDraggerRadius, ballPoint.y), ballPoint)
     }
 }
 
-function deleteNoticeLine() {
-    d3.selectAll(".notice-line").remove()
+function deleteNoticeArc() {
+    d3.selectAll(".notice-arc").remove()
 }
 
 function draggedBall(event) {
@@ -350,7 +365,7 @@ function draggedBall(event) {
     ballDragger
         .attr("cx", ballPoint.x)
         .attr("cy", ballPoint.y);
-    redrawAllTrajectoryAndAllNoticeLine(ballPoint, ballDirectionVector);
+    redrawAllTrajectoryAndAllNoticeArc(ballPoint, ballDirectionVector);
     const destinationPoint = pointAddedAsVector(ballPoint, ballDirectionVector);
     placeHandle(calculatePointOfHandle(ballPoint, destinationPoint));
 }
@@ -375,12 +390,12 @@ function innerProduct(p1, p2) {
     return p1.x * p2.x + p1.y * p2.y;
 }
 
-function redrawAllTrajectoryAndAllNoticeLine(ballPoint, ballDirectionVector) {
+function redrawAllTrajectoryAndAllNoticeArc(ballPoint, ballDirectionVector) {
     deleteTrajectory();
-    deleteNoticeLine();
+    deleteNoticeArc();
     const destinationPoint = pointAddedAsVector(ballPoint, ballDirectionVector);
     drawAllTrajectory(ballPoint, destinationPoint);
-    drawAllNoticeLine(ballPoint);
+    drawAllNoticeArc(ballPoint);
 }
 
 
@@ -401,7 +416,7 @@ function setVer2_0BallCharacteristics() {
     ballRadius = realBallRadius * raitoDisplayToReal;
     ball.attr("r", ballRadius);
     coefficientOfRestitutionBetweenBallAndWall = 0.8;
-    redrawAllTrajectoryAndAllNoticeLine(getBallPoint(), ballDirectionVector);
+    redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 }
 
 function setVer3_0BallCharacteristics() {
@@ -409,8 +424,8 @@ function setVer3_0BallCharacteristics() {
     ballRadius = realBallRadius * raitoDisplayToReal;
     ball.attr("r", ballRadius);
     coefficientOfRestitutionBetweenBallAndWall = 0.5;
-    redrawAllTrajectoryAndAllNoticeLine(getBallPoint(), ballDirectionVector);
+    redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 }
 
 drawAllTrajectory(ballInitialPoint, initialDestinationPoint);
-drawAllNoticeLine(ballInitialPoint);
+drawAllNoticeArc(ballInitialPoint);
