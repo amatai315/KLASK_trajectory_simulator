@@ -342,7 +342,8 @@ function deleteNoticeLine() {
 }
 
 function draggedBall(event) {
-    const ballPoint = new Point(event.x, event.y);
+    const preBallPoint = getBallPoint();
+    const ballPoint = new Point(preBallPoint.x + event.dx, preBallPoint.y + event.dy);
     if (!isInboard(ballPoint)) return;
     deleteTrajectory();
     deleteNoticeLine();
