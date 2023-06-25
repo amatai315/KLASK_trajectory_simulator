@@ -345,17 +345,14 @@ function draggedBall(event) {
     const preBallPoint = getBallPoint();
     const ballPoint = new Point(preBallPoint.x + event.dx, preBallPoint.y + event.dy);
     if (!isInboard(ballPoint)) return;
-    deleteTrajectory();
-    deleteNoticeLine();
-    const destinationPoint = pointAddedAsVector(ballPoint, ballDirectionVector);
     ball.attr("cx", ballPoint.x)
         .attr("cy", ballPoint.y);
     ballDragger
         .attr("cx", ballPoint.x)
         .attr("cy", ballPoint.y);
-    drawAllTrajectory(ballPoint, destinationPoint);
+    redrawAllTrajectoryAndAllNoticeLine(ballPoint, ballDirectionVector);
+    const destinationPoint = pointAddedAsVector(ballPoint, ballDirectionVector);
     placeHandle(calculatePointOfHandle(ballPoint, destinationPoint));
-    drawAllNoticeLine(ballPoint);
 }
 
 function getBallPoint() {
