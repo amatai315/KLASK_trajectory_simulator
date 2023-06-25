@@ -4,9 +4,9 @@ const realBiscuitRadius = 9 / 2;
 const realBiscuitCircleInterval = 85;
 const realGoalRadius = 37 / 2;
 const realDefferenceBetweenGoalToBoardCenter = (313 + realGoalRadius * 2) / 2;
-const realBallRadius = 15 / 2;
+let realBallRadius = 15 / 2;
 const realServiceAreaRadius = 47;
-const coefficientOfRestitutionBetweenBallAndWall = 0.5;
+let coefficientOfRestitutionBetweenBallAndWall = 0.5;
 
 const raitoDisplayToReal = 2;
 
@@ -16,12 +16,12 @@ const biscuitRadius = realBiscuitRadius * raitoDisplayToReal;
 const biscuitCircleInterval = realBiscuitCircleInterval * raitoDisplayToReal;
 const goalRadius = realGoalRadius * raitoDisplayToReal;
 const goalBoardCenterInterval = realDefferenceBetweenGoalToBoardCenter * raitoDisplayToReal;
-const ballRadius = realBallRadius * raitoDisplayToReal;
+let ballRadius = realBallRadius * raitoDisplayToReal;
 const serviceAreaRadius = realServiceAreaRadius * raitoDisplayToReal;
 
 const offset = 20;
 const canvasWidth = boardWidth + offset * 2;
-const canvasHeight = boardHeight + offset * 2 + boardHeight * 0.3;
+const canvasHeight = boardHeight + offset * 2;
 
 const boardCenterX = offset + boardWidth / 2;
 const boardCenterY = offset + boardHeight / 2;
@@ -376,6 +376,43 @@ function crossProduct(p1, p2) {
 
 function innerProduct(p1, p2) {
     return p1.x * p2.x + p1.y * p2.y;
+}
+
+function redrawAllTrajectoryAndAllNoticeLine(ballPoint, ballDirectionVector) {
+    deleteTrajectory();
+    deleteNoticeLine();
+    const destinationPoint = pointAddedAsVector(ballPoint, ballDirectionVector);
+    drawAllTrajectory(ballPoint, destinationPoint);
+    drawAllNoticeLine(ballPoint);
+}
+
+
+function onclickButtonBallVer2_0() {
+    setVer2_0BallCharacteristics();
+    document.getElementById("button-ball-var-2").style.backgroundColor = "aqua";
+    document.getElementById("button-ball-var-3").style.backgroundColor = "aliceblue";
+}
+
+function onclickButtonBallVer3_0() {
+    setVer3_0BallCharacteristics();
+    let hoge = document.getElementById("button-ball-var-2").style.backgroundColor = "aliceblue";
+    document.getElementById("button-ball-var-3").style.backgroundColor = "aqua";
+}
+
+function setVer2_0BallCharacteristics() {
+    realBallRadius = 14.5 / 2;
+    ballRadius = realBallRadius * raitoDisplayToReal;
+    ball.attr("r", ballRadius);
+    coefficientOfRestitutionBetweenBallAndWall = 0.8;
+    redrawAllTrajectoryAndAllNoticeLine(getBallPoint(), ballDirectionVector);
+}
+
+function setVer3_0BallCharacteristics() {
+    realBallRadius = 15 / 2;
+    ballRadius = realBallRadius * raitoDisplayToReal;
+    ball.attr("r", ballRadius);
+    coefficientOfRestitutionBetweenBallAndWall = 0.5;
+    redrawAllTrajectoryAndAllNoticeLine(getBallPoint(), ballDirectionVector);
 }
 
 drawAllTrajectory(ballInitialPoint, initialDestinationPoint);
