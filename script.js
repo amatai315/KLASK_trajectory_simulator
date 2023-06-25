@@ -63,7 +63,7 @@ const initialHandlePoint = calculatePointOfHandle(ballInitialPoint, initialDesti
 const trajectoryNumber = 4;
 
 const canvas = d3
-    .select("body")
+    .select("#board-svg-wrapper")
     .append("svg")
     .attr("width", canvasWidth)
     .attr("height", canvasHeight);
