@@ -65,6 +65,8 @@ const trajectoryNumber = 4;
 const canvas = d3
     .select("#board-svg-wrapper")
     .append("svg")
+    .style("height", "100%")
+    .style("width", "100%")
     .attr("viewBox", `0 0 ${canvasWidth} ${canvasHeight}`);
 const board = canvas
     .append("rect")
