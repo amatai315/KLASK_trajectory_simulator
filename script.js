@@ -80,7 +80,7 @@ const biscuit_circle_left = canvas
     .attr("cy", boardCenterY)
     .attr("r", biscuitRadius)
     .attr("stroke", "white")
-    .attr("stroke-width", "2")
+    .attr("stroke-width", `${raitoDisplayToReal}`)
     .attr("fill", "rgba(0,0,0,0)");
 const biscuit_circle_center = canvas
     .append("circle")
@@ -88,7 +88,7 @@ const biscuit_circle_center = canvas
     .attr("cy", boardCenterY)
     .attr("r", biscuitRadius)
     .attr("stroke", "white")
-    .attr("stroke-width", "2")
+    .attr("stroke-width", `${raitoDisplayToReal}`)
     .attr("fill", "rgba(0,0,0,0)");
 const biscuit_circle_right = canvas
     .append("circle")
@@ -96,7 +96,7 @@ const biscuit_circle_right = canvas
     .attr("cy", boardCenterY)
     .attr("r", biscuitRadius)
     .attr("stroke", "white")
-    .attr("stroke-width", "2")
+    .attr("stroke-width", `${raitoDisplayToReal}`)
     .attr("fill", "rgba(0,0,0,0)");
 const my_goal = canvas
     .append("circle")
@@ -116,7 +116,7 @@ const my_service_area_left = canvas
     .attr("cy", offset + boardHeight)
     .attr("r", serviceAreaRadius)
     .attr("stroke", "white")
-    .attr("stroke-width", "2")
+    .attr("stroke-width", `${raitoDisplayToReal}`)
     .attr("fill", "rgba(0,0,0,0)");
 const my_service_area_right = canvas
     .append("circle")
@@ -124,7 +124,7 @@ const my_service_area_right = canvas
     .attr("cy", offset + boardHeight)
     .attr("r", serviceAreaRadius)
     .attr("stroke", "white")
-    .attr("stroke-width", "2")
+    .attr("stroke-width", `${raitoDisplayToReal}`)
     .attr("fill", "rgba(0,0,0,0)");
 const opponent_service_area_left = canvas
     .append("circle")
@@ -132,7 +132,7 @@ const opponent_service_area_left = canvas
     .attr("cy", offset)
     .attr("r", serviceAreaRadius)
     .attr("stroke", "white")
-    .attr("stroke-width", "2")
+    .attr("stroke-width", `${raitoDisplayToReal}`)
     .attr("fill", "rgba(0,0,0,0)");
 const opponent_service_area_right = canvas
     .append("circle")
@@ -140,7 +140,7 @@ const opponent_service_area_right = canvas
     .attr("cy", offset)
     .attr("r", serviceAreaRadius)
     .attr("stroke", "white")
-    .attr("stroke-width", "2")
+    .attr("stroke-width", `${raitoDisplayToReal}`)
     .attr("fill", "rgba(0,0,0,0)");
 const ballDragger = canvas
     .append("circle")
@@ -159,7 +159,7 @@ const ball = canvas
     .attr("r", ballRadius)
     .attr("fill", "rgb(200,130,120)")
     .attr("stroke", "white")
-    .attr("stroke-width", 3)
+    .attr("stroke-width", `${raitoDisplayToReal * 1.5}`)
     .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
     .call(
         d3.drag()
