@@ -324,9 +324,6 @@ function drawNoticeArc(p1, p2, ballPoint) {
         .attr("d", `M ${p1.x},${p1.y} 
         A ${ballDraggerRadius} ${ballDraggerRadius} 0 0 1 ${p2.x},${p2.y}
         L ${ballPoint.x},${ballPoint.y} z`);
-    console.log(`M ${p1.x},${p1.y} 
-    A ${ballDraggerRadius} ${ballDraggerRadius} 0 0 1 ${p2.x},${p2.y}
-    L ${ballPoint.x},${ballPoint.y} z`)
 }
 
 function drawAllNoticeArc(ballPoint) {
