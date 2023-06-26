@@ -26,10 +26,10 @@ const canvasHeight = boardHeight + offset * 2;
 const boardCenterX = offset + boardWidth / 2;
 const boardCenterY = offset + boardHeight / 2;
 
-const ballCollisionLeft = offset + ballRadius;
-const ballCollisionRight = offset + boardWidth - ballRadius;
-const ballCollisionTop = offset + ballRadius;
-const ballCollisionBottom = offset + boardHeight - ballRadius;
+let ballCollisionLeft = offset + ballRadius;
+let ballCollisionRight = offset + boardWidth - ballRadius;
+let ballCollisionTop = offset + ballRadius;
+let ballCollisionBottom = offset + boardHeight - ballRadius;
 
 class Point {
     constructor(x, y) {
@@ -413,18 +413,23 @@ function onclickButtonBallVer3_0() {
     document.getElementById("button-ball-var-3").style.backgroundColor = "aqua";
 }
 
-function setVer2_0BallCharacteristics() {
-    realBallRadius = 14.5 / 2;
+function reconfigureRealBallRadius(realBallRadius) {
     ballRadius = realBallRadius * raitoDisplayToReal;
-    ball.attr("r", ballRadius);
+    ball.attr("r", ballRadius)
+    ballCollisionLeft = offset + ballRadius;
+    ballCollisionRight = offset + boardWidth - ballRadius;
+    ballCollisionTop = offset + ballRadius;
+    ballCollisionBottom = offset + boardHeight - ballRadius;
+}
+
+function setVer2_0BallCharacteristics() {
+    reconfigureRealBallRadius(14.5 / 2);
     coefficientOfRestitutionBetweenBallAndWall = 0.8;
     redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 }
 
 function setVer3_0BallCharacteristics() {
-    realBallRadius = 15 / 2;
-    ballRadius = realBallRadius * raitoDisplayToReal;
-    ball.attr("r", ballRadius);
+    reconfigureRealBallRadius(15 / 2);
     coefficientOfRestitutionBetweenBallAndWall = 0.5;
     redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 }
