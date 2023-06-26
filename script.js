@@ -406,7 +406,7 @@ function onclickButtonBallVer2_0() {
 
 function onclickButtonBallVer3_0() {
     setVer3_0BallCharacteristics();
-    let hoge = document.getElementById("button-ball-var-2").style.backgroundColor = "aliceblue";
+    document.getElementById("button-ball-var-2").style.backgroundColor = "aliceblue";
     document.getElementById("button-ball-var-3").style.backgroundColor = "aqua";
 }
 
