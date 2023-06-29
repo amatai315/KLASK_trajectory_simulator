@@ -195,10 +195,7 @@ const handle = canvas.insert("circle", ":nth-child(12)")
 //     .attr("placeholder", coefficientOfRestitutionBetweenBallAndWall)
 //     .on("input", () => {
 //         coefficientOfRestitutionBetweenBallAndWall = d3.select("#coefficient-input").node().value;
-//         deleteTrajectory();
-//         const ballPoint = new Point(Number(ball.attr("cx")), Number(ball.attr("cy"));
-//         const destinationPoint = new Point(ballPoint.x + ballDirectionVector.x, ballPoint.y + ballDirectionVector.y);
-//         drawAllTrajectory(ballPoint, destinationPoint);
+//         redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 //     });
 
 function drawTrajectory(p1, p2) {
