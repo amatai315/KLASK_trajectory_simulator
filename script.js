@@ -395,16 +395,16 @@ function redrawAllTrajectoryAndAllNoticeArc(ballPoint, ballDirectionVector) {
 }
 
 
-function onclickButtonBallVer2_0() {
-    setVer2_0BallCharacteristics();
-    document.getElementById("ball-ver-2-button").style.backgroundColor = "aqua";
-    document.getElementById("ball-ver-3-button").style.backgroundColor = "aliceblue";
+function onclickButtonBallVer2019() {
+    setVer2019BallCharacteristics();
+    document.getElementById("ball-ver-2019-button").style.backgroundColor = "aqua";
+    document.getElementById("ball-ver-2023-button").style.backgroundColor = "aliceblue";
 }
 
-function onclickButtonBallVer3_0() {
-    setVer3_0BallCharacteristics();
-    document.getElementById("ball-ver-2-button").style.backgroundColor = "aliceblue";
-    document.getElementById("ball-ver-3-button").style.backgroundColor = "aqua";
+function onclickButtonBallVer2023() {
+    setVer2023BallCharacteristics();
+    document.getElementById("ball-ver-2019-button").style.backgroundColor = "aliceblue";
+    document.getElementById("ball-ver-2023-button").style.backgroundColor = "aqua";
 }
 
 function reconfigureRealBallRadius(realBallRadius) {
@@ -416,13 +416,13 @@ function reconfigureRealBallRadius(realBallRadius) {
     ballCollisionBottom = offset + boardHeight - ballRadius;
 }
 
-function setVer2_0BallCharacteristics() {
+function setVer2019BallCharacteristics() {
     reconfigureRealBallRadius(14.5 / 2);
     coefficientOfRestitutionBetweenBallAndWall = 0.8;
     redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 }
 
-function setVer3_0BallCharacteristics() {
+function setVer2023BallCharacteristics() {
     reconfigureRealBallRadius(15 / 2);
     coefficientOfRestitutionBetweenBallAndWall = 0.5;
     redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
