@@ -397,14 +397,14 @@ function redrawAllTrajectoryAndAllNoticeArc(ballPoint, ballDirectionVector) {
 
 function onclickButtonBallVer2_0() {
     setVer2_0BallCharacteristics();
-    document.getElementById("button-ball-var-2").style.backgroundColor = "aqua";
-    document.getElementById("button-ball-var-3").style.backgroundColor = "aliceblue";
+    document.getElementById("ball-ver-2-button").style.backgroundColor = "aqua";
+    document.getElementById("ball-ver-3-button").style.backgroundColor = "aliceblue";
 }
 
 function onclickButtonBallVer3_0() {
     setVer3_0BallCharacteristics();
-    document.getElementById("button-ball-var-2").style.backgroundColor = "aliceblue";
-    document.getElementById("button-ball-var-3").style.backgroundColor = "aqua";
+    document.getElementById("ball-ver-2-button").style.backgroundColor = "aliceblue";
+    document.getElementById("ball-ver-3-button").style.backgroundColor = "aqua";
 }
 
 function reconfigureRealBallRadius(realBallRadius) {
@@ -430,7 +430,7 @@ function setVer3_0BallCharacteristics() {
 
 function onclickButtonBackwardShot() {
     displayNoticeArcBackwardShot = !displayNoticeArcBackwardShot;
-    document.getElementById("button-backward-shot").style.backgroundColor = displayNoticeArcBackwardShot ? "aqua" : "aliceblue";
+    document.getElementById("backward-shot-button").style.backgroundColor = displayNoticeArcBackwardShot ? "aqua" : "aliceblue";
     redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 }
 
