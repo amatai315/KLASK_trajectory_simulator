@@ -297,7 +297,7 @@ function isIntoOpponentGoalFirst(startPoint, endPoint) {
     for (let i = 0; i < trajectoryNumber; i++) {
         const collisionPoint =
             calculateCollisionPoint(startPoint, endPoint);
-        if (collisionPoint.y == ballCollisionBottom && !displayNoticeArcBackwardShot) return false;
+        if (startPoint.y == ballCollisionBottom && !displayNoticeArcBackwardShot) return false;
         if (startPoint.y != ballCollisionTop && i == trajectoryNumber - 1 ) return false; //this case may not occur in real games.
         const isIntoOpponentGoal = 
             didCollideLineSegmentAndCircle(startPoint, collisionPoint, opponentGoalPoint, goalRadius);
