@@ -186,6 +186,23 @@ const handle = canvas.insert("circle", ":nth-child(12)")
                 placeHandle(calculatePointOfHandle(ballPoint, eventPoint));
                 ballDirectionVector = vectorP2ToP1(ballPoint, eventPoint);
             }));
+for (let i = 0; i < 14; i++){
+    for (let j = 0; j < 2; j++){
+        const text_height = 20;
+        const text_width = text_height / 16.5 * 10.84;
+        const x = (j == 0) ? offset / 3 : canvasWidth - offset / 3;
+        const y = offset + i * boardHeight / 14 + boardHeight / 28;
+        const rotation = (j == 0) ? -90 : 90;
+        canvas
+            .append("text")
+            .attr("x", x - text_width / 2)
+            .attr("y", y + text_height / 2)
+            .attr("font-size", `${text_height / 4 * 3}pt`)
+            .attr("transform", `rotate(${rotation}, ${x}, ${y})`)
+            .text(`${Math.max(6 - i, i - 7)}`);
+    }
+}
+
 //remove commentout to adjust coefficient
 // const coefficientInput = d3
 //     .select("body")
