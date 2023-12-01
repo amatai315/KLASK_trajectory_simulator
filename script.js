@@ -31,6 +31,11 @@ let ballCollisionRight = offset + boardWidth - ballRadius;
 let ballCollisionTop = offset + ballRadius;
 let ballCollisionBottom = offset + boardHeight - ballRadius;
 
+const wallRight = canvasWidth - offset;
+const wallLeft = offset;
+const wallTop = offset;
+const wallBottom = canvasHeight - offset;
+
 class Point {
     constructor(x, y) {
         this.x = x;
@@ -371,6 +376,139 @@ function deleteNoticeArc() {
     d3.selectAll(".notice-arc").remove()
 }
 
+function isInWallY(y) {
+    return wallTop <= y && y <= wallBottom;
+}
+
+function calculateWallIntersectPoint(startPoint, endPoint) {
+    const x1 = startPoint.x;
+    const y1 = startPoint.y;
+    const x2 = endPoint.x;
+    const y2 = endPoint.y;
+    if (x1 < x2) {
+        let collisionY = y1 + (wallRight - x1) * (y2 - y1) / (x2 - x1);
+        if (isInWallY(collisionY)) return new Point(wallRight, collisionY);
+    } else if (x2 < x1) {
+        let collisionY = y1 + (wallLeft - x1) * (y2 - y1) / (x2 - x1);
+        if (isInWallY(collisionY)) return new Point(wallLeft, collisionY);
+    } else {
+        return y1 > y2 ? new Point(x1, wallTop) : new Point(x1, wallBottom);
+    }
+    if (y1 < y2) {
+        return new Point((wallBottom - y1) * (x2 - x1) / (y2 - y1) + x1, wallBottom);
+    } else {
+        return new Point((wallTop - y1) * (x2 - x1) / (y2 - y1) + x1, wallTop);
+    }
+}
+
+function areOnDifferentWall(p1, p2) {
+    if (p1.x == wallLeft || p1.x == wallRight) {
+        if (p1.x == p2.x) return false;
+    }
+    if (p1.y == wallTop || p1.y == wallBottom) {
+        return p1.y != p2.y;
+    }
+    return true
+}
+
+function calculateNearestWallCorner(p) {
+    let nearestWallCorner = new Point(wallLeft, wallTop);
+    [wallTop, wallBottom].forEach(y => {
+        [wallLeft, wallRight].forEach(x => {
+            if (distanceOfTwoPoints(new Point(x, y), p)<
+                distanceOfTwoPoints(nearestWallCorner, p)) {
+                nearestWallCorner = new Point(x, y)
+                }
+        })
+    });
+    return nearestWallCorner;
+}
+
+function drawNoticeTriangle(ballPoint, p1, p2){
+    canvas.insert("path", ":nth-child(11)")
+        .attr("class", "notice-triangle")
+        .attr("fill", "rgba(256,256,256, 0.2)")
+        .attr("stroke", "rgba(256,256,256, 0.2)")
+        .attr("d", `M ${p1.x},${p1.y} 
+        L ${p2.x},${p2.y}
+        L ${ballPoint.x},${ballPoint.y} z`);
+}
+
+function drawAllNoticeTriangle(ballPoint) {
+    const angleDevide = 1800;
+    let lineStartPoint = calculateWallIntersectPoint(ballPoint, pointAddedAsVector(ballPoint, new Point(1, 0)));
+    let preIsIntoOpponentGoalFirst = isIntoOpponentGoalFirst(ballPoint, lineStartPoint);
+    for (let i = 0; i < angleDevide; i++){
+        const angle = i / angleDevide * 2 * Math.PI;
+        const destinationPoint = 
+            calculateWallIntersectPoint(ballPoint,
+                pointAddedAsVector(ballPoint, new Point(Math.cos(angle), Math.sin(angle))));
+        if (preIsIntoOpponentGoalFirst && areOnDifferentWall(lineStartPoint, destinationPoint)) {
+            const nearestWallCorner = calculateNearestWallCorner(destinationPoint);
+            drawNoticeTriangle(ballPoint, lineStartPoint, nearestWallCorner)
+            lineStartPoint = nearestWallCorner;
+        } else if (preIsIntoOpponentGoalFirst && !isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
+            drawNoticeTriangle(ballPoint, lineStartPoint, destinationPoint);
+        } else if (!preIsIntoOpponentGoalFirst && isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
+            lineStartPoint = destinationPoint;
+        }
+        preIsIntoOpponentGoalFirst = isIntoOpponentGoalFirst(ballPoint, destinationPoint)
+    }
+    if (preIsIntoOpponentGoalFirst) {
+        drawNoticeTriangle(ballPoint, lineStartPoint,
+            calculateWallIntersectPoint(ballPoint, pointAddedAsVector(ballPoint, new Point(1,0))))
+    }
+}
+
+function deleteNoticeTriangle() {
+    d3.selectAll(".notice-triangle").remove()
+}
+
+function drawNoticeWallLine(p1, p2){
+    canvas
+        .append("line")
+        .attr("class", "notice-wall-line")
+        .attr("x1", p1.x)
+        .attr("y1", p1.y)
+        .attr("x2", p2.x)
+        .attr("y2", p2.y)
+        .attr("stroke-width", 10)
+        .attr("stroke", "rgb(230,230,30)");
+}
+
+function drawAllNoticeWallLine(ballPoint) {
+    const angleDevide = 1800;
+    //let lineStartPoint = calculateCollisionPoint(ballPoint, pointAddedAsVector(ballPoint, new Point(1, 0)));
+    let lineStartPoint = calculateWallIntersectPoint(ballPoint, pointAddedAsVector(ballPoint, new Point(1, 0)));
+    let preIsIntoOpponentGoalFirst = isIntoOpponentGoalFirst(ballPoint, lineStartPoint);
+    for (let i = 0; i < angleDevide; i++){
+        const angle = i / angleDevide * 2 * Math.PI;
+        const destinationPoint = 
+            //calculateCollisionPoint(ballPoint,
+            //    pointAddedAsVector(ballPoint, new Point(Math.cos(angle), Math.sin(angle))));
+            calculateWallIntersectPoint(ballPoint,
+                pointAddedAsVector(ballPoint, new Point(Math.cos(angle), Math.sin(angle))));
+        if (preIsIntoOpponentGoalFirst && areOnDifferentWall(lineStartPoint, destinationPoint)) {
+            const nearestWallCorner = calculateNearestWallCorner(destinationPoint);
+            drawNoticeWallLine(lineStartPoint, nearestWallCorner)
+            lineStartPoint = nearestWallCorner;
+        } else if (preIsIntoOpponentGoalFirst && !isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
+            drawNoticeWallLine(lineStartPoint, destinationPoint);
+        } else if (!preIsIntoOpponentGoalFirst && isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
+            lineStartPoint = destinationPoint;
+        }
+        preIsIntoOpponentGoalFirst = isIntoOpponentGoalFirst(ballPoint, destinationPoint)
+    }
+    if (preIsIntoOpponentGoalFirst) {
+        drawNoticeWallLine(lineStartPoint,
+            calculateWallIntersectPoint(ballPoint, pointAddedAsVector(ballPoint, new Point(1,0))))
+    }
+}
+
+function deleteNoticeWallLine() {
+    d3.selectAll(".notice-wall-line").remove()
+}
+
 function draggedBall(event) {
     const preBallPoint = getBallPoint();
     const ballPoint = new Point(preBallPoint.x + event.dx, preBallPoint.y + event.dy);
@@ -408,9 +546,11 @@ function innerProduct(p1, p2) {
 function redrawAllTrajectoryAndAllNoticeArc(ballPoint, ballDirectionVector) {
     deleteTrajectory();
     deleteNoticeArc();
+    deleteNoticeTriangle();
     const destinationPoint = pointAddedAsVector(ballPoint, ballDirectionVector);
     drawAllTrajectory(ballPoint, destinationPoint);
     drawAllNoticeArc(ballPoint);
+    drawAllNoticeTriangle(ballPoint);
 }
 
 
@@ -455,3 +595,4 @@ function onclickButtonBackwardShot() {
 
 drawAllTrajectory(ballInitialPoint, initialDestinationPoint);
 drawAllNoticeArc(ballInitialPoint);
+drawAllNoticeTriangle(ballInitialPoint);
