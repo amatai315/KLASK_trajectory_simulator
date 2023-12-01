@@ -464,51 +464,6 @@ function deleteNoticeTriangle() {
     d3.selectAll(".notice-triangle").remove()
 }
 
-function drawNoticeWallLine(p1, p2){
-    canvas
-        .append("line")
-        .attr("class", "notice-wall-line")
-        .attr("x1", p1.x)
-        .attr("y1", p1.y)
-        .attr("x2", p2.x)
-        .attr("y2", p2.y)
-        .attr("stroke-width", 10)
-        .attr("stroke", "rgb(230,230,30)");
-}
-
-function drawAllNoticeWallLine(ballPoint) {
-    const angleDevide = 1800;
-    //let lineStartPoint = calculateCollisionPoint(ballPoint, pointAddedAsVector(ballPoint, new Point(1, 0)));
-    let lineStartPoint = calculateWallIntersectPoint(ballPoint, pointAddedAsVector(ballPoint, new Point(1, 0)));
-    let preIsIntoOpponentGoalFirst = isIntoOpponentGoalFirst(ballPoint, lineStartPoint);
-    for (let i = 0; i < angleDevide; i++){
-        const angle = i / angleDevide * 2 * Math.PI;
-        const destinationPoint = 
-            //calculateCollisionPoint(ballPoint,
-            //    pointAddedAsVector(ballPoint, new Point(Math.cos(angle), Math.sin(angle))));
-            calculateWallIntersectPoint(ballPoint,
-                pointAddedAsVector(ballPoint, new Point(Math.cos(angle), Math.sin(angle))));
-        if (preIsIntoOpponentGoalFirst && areOnDifferentWall(lineStartPoint, destinationPoint)) {
-            const nearestWallCorner = calculateNearestWallCorner(destinationPoint);
-            drawNoticeWallLine(lineStartPoint, nearestWallCorner)
-            lineStartPoint = nearestWallCorner;
-        } else if (preIsIntoOpponentGoalFirst && !isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
-            drawNoticeWallLine(lineStartPoint, destinationPoint);
-        } else if (!preIsIntoOpponentGoalFirst && isIntoOpponentGoalFirst(ballPoint, destinationPoint)) {
-            lineStartPoint = destinationPoint;
-        }
-        preIsIntoOpponentGoalFirst = isIntoOpponentGoalFirst(ballPoint, destinationPoint)
-    }
-    if (preIsIntoOpponentGoalFirst) {
-        drawNoticeWallLine(lineStartPoint,
-            calculateWallIntersectPoint(ballPoint, pointAddedAsVector(ballPoint, new Point(1,0))))
-    }
-}
-
-function deleteNoticeWallLine() {
-    d3.selectAll(".notice-wall-line").remove()
-}
-
 function draggedBall(event) {
     const preBallPoint = getBallPoint();
     const ballPoint = new Point(preBallPoint.x + event.dx, preBallPoint.y + event.dy);
