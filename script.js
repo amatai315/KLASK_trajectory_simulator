@@ -59,6 +59,7 @@ const opponentGoalPoint = new Point(boardCenterX, boardCenterY - goalBoardCenter
 
 const ballDraggerRadius = ballRadius * 5;
 const handleRadius = ballRadius * 2;
+const handleArrowWidth = handleRadius * 2.2;
 
 const ballInitialPoint = new Point(boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
 let ballDirectionVector = new Point(boardWidth * 0.4, -boardHeight * 0.3);
@@ -154,7 +155,7 @@ const ballDragger = canvas
     .attr("cx", ballInitialPoint.x)
     .attr("cy", ballInitialPoint.y)
     .attr("r", ballDraggerRadius)
-    .attr("fill", "rgba(230,230,30, 0.5)")
+    .attr("fill", "rgba(230,230,30, 0.4)")
     .call(
         d3.drag()
             .on("drag", draggedBall)
@@ -172,15 +173,11 @@ const ball = canvas
         d3.drag()
             .on("drag", draggedBall)
 );
-const handle = canvas.insert("circle", ":nth-child(12)")
+const handle_arrow = canvas.insert("image", ":nth-child(12)")
     .attr("class", "handle")
-    .attr("cx", initialHandlePoint.x)
-    .attr("cy", initialHandlePoint.y)
-    .attr("r", handleRadius)
-    .attr("fill", "rgba(30,150,30)")
-    .attr("stroke", "white")
-    .attr("stroke-width", handleRadius / 8)
-    .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
+    .attr("href", `./image/arrow_green.png`)
+    .attr("width", handleArrowWidth)
+    .attr("height", handleArrowWidth)
     .call(
         d3.drag()
             .on("drag", (event) => {
@@ -188,9 +185,18 @@ const handle = canvas.insert("circle", ":nth-child(12)")
                 const ballPoint = getBallPoint();
                 const eventPoint = new Point(event.x, event.y);
                 drawAllTrajectory(ballPoint, eventPoint);
-                placeHandle(calculatePointOfHandle(ballPoint, eventPoint));
+                const handlePoint = calculatePointOfHandle(ballPoint, eventPoint)
+                placeHandle(handlePoint);
                 ballDirectionVector = vectorP2ToP1(ballPoint, eventPoint);
+                placeHandleArrow(handlePoint, ballDirectionVector);
             }));
+const handle = canvas.insert("circle", ":nth-child(12)")
+    .attr("class", "handle")
+    .attr("r", handleRadius)
+    .attr("fill", "rgba(30,150,30,0)")
+//    .attr("stroke", "white")
+//    .attr("stroke-width", handleRadius / 8)
+    .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))");
 for (let i = 0; i < 14; i++){
     for (let j = 0; j < 2; j++){
         const text_height = 20;
@@ -302,6 +308,13 @@ function placeHandle(handlePoint) {
     handle
         .attr("cx", handlePoint.x)
         .attr("cy", handlePoint.y)
+}
+
+function placeHandleArrow(handlePoint, ballDirectionVector) {
+    handle_arrow
+        .attr("x", handlePoint.x - handleArrowWidth / 2)
+        .attr("y", handlePoint.y - handleArrowWidth / 2)
+        .attr("transform", `rotate(${Math.atan2(ballDirectionVector.y, ballDirectionVector.x) * 180 / Math.PI},${handlePoint.x}, ${handlePoint.y})`)
 }
 
 function didCollideLineSegmentAndCircle(lineSegmentPoint1, lineSegmentPoint2, centerPoint, circleRadius){
@@ -475,7 +488,9 @@ function draggedBall(event) {
         .attr("cy", ballPoint.y);
     redrawAllTrajectoryAndAllNoticeArc(ballPoint, ballDirectionVector);
     const destinationPoint = pointAddedAsVector(ballPoint, ballDirectionVector);
-    placeHandle(calculatePointOfHandle(ballPoint, destinationPoint));
+    const handlePoint = calculatePointOfHandle(ballPoint, destinationPoint)
+    placeHandle(handlePoint);
+    placeHandleArrow(handlePoint, ballDirectionVector);
 }
 
 function getBallPoint() {
@@ -548,6 +563,8 @@ function onclickButtonBackwardShot() {
     redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 }
 
+placeHandle(initialHandlePoint);
+placeHandleArrow(initialHandlePoint, ballDirectionVector);
 drawAllTrajectory(ballInitialPoint, initialDestinationPoint);
 drawAllNoticeArc(ballInitialPoint);
 drawAllNoticeTriangle(ballInitialPoint);
