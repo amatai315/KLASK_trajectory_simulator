@@ -21,6 +21,8 @@ const serviceAreaRadius = realServiceAreaRadius * raitoDisplayToReal;
 
 const biscuitInnerColor = "rgba(230,230,230,1)"
 const biscuitEdgeColor = "rgb(160,160,160)"
+const ballDraggerColor = "rgba(0,0,0,0)"
+//const ballDraggerColor = "rgba(230,230,30, 0.4)"
 
 const offset = 20;
 const canvasWidth = boardWidth + offset * 2;
@@ -75,6 +77,7 @@ const trajectoryNumber = 4;
 let displayNoticeArcBackwardShot = false;
 let displayBiscuit = true;
 let validStriker = true;
+let displayTrajectoryAndNoticeInformation = true;
 
 const canvas = d3
     .select("#board-svg-wrapper")
@@ -139,7 +142,7 @@ const ballDragger = canvas
     .attr("cx", ballInitialPoint.x)
     .attr("cy", ballInitialPoint.y)
     .attr("r", ballDraggerRadius)
-    .attr("fill", "rgba(230,230,30, 0.4)")
+    .attr("fill", ballDraggerColor)
     .call(
         d3.drag()
             .on("drag", draggedBall)
@@ -273,6 +276,7 @@ for (let i = 0; i < 14; i++){
 //     });
 
 function drawTrajectory(p1, p2) {
+    if (!displayTrajectoryAndNoticeInformation) return;
     canvas.append("line")
         .attr("class", "trajectory")
         .attr("x1", p1.x)
@@ -410,6 +414,8 @@ function isIntoOpponentGoalFirst(startPoint, endPoint) {
 }
 
 function drawNoticeArc(p1, p2, ballPoint) {
+    if (!displayTrajectoryAndNoticeInformation) return;
+    return;
     canvas.insert("path", ":nth-child(8)")
         .attr("class", "notice-arc")
         .attr("fill", "rgb(256,256,256)")
@@ -497,6 +503,7 @@ function calculateNearestWallCorner(p) {
 }
 
 function drawNoticeTriangle(ballPoint, p1, p2){
+    if (!displayTrajectoryAndNoticeInformation) return;
     canvas.insert("path", ":nth-child(8)")
         .attr("class", "notice-triangle")
         .attr("fill", "rgba(256,256,256, 0.2)")
@@ -636,6 +643,25 @@ function onclickButtonValidStriker() {
         d3.selectAll(".striker").attr("visibility", "visible");
     } else {
         d3.selectAll(".striker").attr("visibility", "hidden");
+    }
+}
+
+function onclickButtonDisplayTrajectoryAndNoticeInformation() {
+    displayTrajectoryAndNoticeInformation = !displayTrajectoryAndNoticeInformation
+    document.getElementById("display-trajectory-and-notice-information-button").style.backgroundColor = 
+    displayTrajectoryAndNoticeInformation ? "aqua" : "aliceblue";
+    if (displayTrajectoryAndNoticeInformation) {
+        redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
+        handle_arrow.attr("visibility", "visible");
+        handle.attr("visibility", "visible");
+        ballDragger.attr("fill", ballDraggerColor);
+    } else {
+        deleteNoticeArc();
+        deleteNoticeTriangle();
+        deleteTrajectory();
+        handle_arrow.attr("visibility", "hidden");
+        handle.attr("visibility", "hidden");
+        ballDragger.attr("fill", "rgba(0,0,0,0)");
     }
 }
 
