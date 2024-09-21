@@ -164,7 +164,7 @@ for (let i = -1; i < 2; i++){
     .call(d3.drag()
         .on("drag", function(event) {
             const biscuitPoint = new Point(Number(d3.select(this).attr("cx")) + event.dx, Number(d3.select(this).attr("cy")) + event.dy);
-            if (!isInboard(biscuitPoint)) return;
+            if (!isInBoardBiscuit(biscuitPoint)) return;
             d3.select(this).attr("cx",biscuitPoint.x)
                 .attr("cy", biscuitPoint.y);
     }));
@@ -258,6 +258,11 @@ function isInboardX(x) {
 
 function isInboard(p) {
     return isInboardX(p.x) && isInboardY(p.y);
+}
+
+function isInBoardBiscuit(p) {
+    return offset + biscuitRadius <= p.x && p.x <= offset + boardWidth - biscuitRadius
+        && offset + biscuitRadius <= p.y && p.y <= offset + boardHeight - biscuitRadius
 }
 
 function calculateCollisionPoint(startPoint, endPoint) {
