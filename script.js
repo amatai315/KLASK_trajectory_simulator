@@ -65,6 +65,8 @@ const handleRadius = ballRadius * 2;
 const handleArrowWidth = handleRadius * 2.2;
 
 const ballInitialPoint = new Point(boardCenterX - boardWidth * 0.2, offset + boardHeight * 0.7)
+const myStrikerInitialPoint = new Point(boardCenterX - boardWidth * 0.3, wallTop + boardHeight * 0.8)
+const opponentStrikerInitialPoint = new Point(boardCenterX - boardWidth * 0.1, wallTop + boardHeight * 0.2)
 let ballDirectionVector = new Point(boardWidth * 0.4, -boardHeight * 0.3);
 const initialDestinationPoint = pointAddedAsVector(ballInitialPoint, ballDirectionVector);
 const initialHandlePoint = calculatePointOfHandle(ballInitialPoint, initialDestinationPoint);
@@ -72,6 +74,7 @@ const initialHandlePoint = calculatePointOfHandle(ballInitialPoint, initialDesti
 const trajectoryNumber = 4;
 let displayNoticeArcBackwardShot = false;
 let displayBiscuit = true;
+let validStriker = true;
 
 const canvas = d3
     .select("#board-svg-wrapper")
@@ -151,6 +154,40 @@ for (let i = -1; i < 2; i++){
     .attr("stroke-width", `${raitoDisplayToReal}`)
     .attr("fill", "rgba(0,0,0,0)");
 }
+const my_striker = canvas
+    .append("circle")
+    .attr("class", "striker")
+    .attr("cx", myStrikerInitialPoint.x)
+    .attr("cy", myStrikerInitialPoint.y)
+    .attr("r", ballRadius)
+    .attr("fill", "black")
+    .attr("stroke", "rgb(100,100,100)")
+    .attr("stroke-width", `${raitoDisplayToReal * 1.5}`)
+    .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
+    .call(d3.drag()
+        .on("drag", function (event) {
+            const point = new Point(Number(d3.select(this).attr("cx")) + event.dx, Number(d3.select(this).attr("cy")) + event.dy);
+            if (!isInMyFiledStriker(point)) return;
+            d3.select(this).attr("cx", point.x)
+                .attr("cy", point.y);
+        }));
+const opponent_striker = canvas
+        .append("circle")
+        .attr("class", "striker")
+        .attr("cx", opponentStrikerInitialPoint.x)
+        .attr("cy", opponentStrikerInitialPoint.y)
+        .attr("r", ballRadius)
+        .attr("fill", "black")
+        .attr("stroke", "rgb(100,100,100)")
+        .attr("stroke-width", `${raitoDisplayToReal * 1.5}`)
+        .style("filter", "drop-shadow(0px 3px 10px rgba(0,0,0,0.2))")
+        .call(d3.drag()
+            .on("drag", function (event) {
+                const point = new Point(Number(d3.select(this).attr("cx")) + event.dx, Number(d3.select(this).attr("cy")) + event.dy);
+                if (!isInOpponentFiledStriker(point)) return;
+                d3.select(this).attr("cx", point.x)
+                    .attr("cy", point.y);
+            }));
 for (let i = -1; i < 2; i++){
     canvas
     .append("circle")
@@ -263,6 +300,14 @@ function isInboard(p) {
 function isInBoardBiscuit(p) {
     return wallLeft + biscuitRadius <= p.x && p.x <= wallRight - biscuitRadius
         && wallTop + biscuitRadius <= p.y && p.y <= wallBottom - biscuitRadius;
+}
+
+function isInMyFiledStriker(p) {
+    return isInboardX(p.x) && boardCenterY + ballRadius <= p.y && p.y <= ballCollisionBottom;
+}
+
+function isInOpponentFiledStriker(p) {
+    return isInboardX(p.x) && ballCollisionTop <= p.y && p.y <= boardCenterY - ballRadius;
 }
 
 function calculateCollisionPoint(startPoint, endPoint) {
@@ -582,6 +627,16 @@ function onclickButtonDisplayBiscuit() {
     document.getElementById("display-biscuit-button").style.backgroundColor = displayBiscuit ? "aqua" : "aliceblue";
     if (displayBiscuit) d3.selectAll(".biscuit").attr("visibility", "visible");
     else d3.selectAll(".biscuit").attr("visibility", "hidden");
+}
+
+function onclickButtonValidStriker() {
+    validStriker = !validStriker
+    document.getElementById("valid-striker-button").style.backgroundColor = validStriker ? "aqua" : "aliceblue";
+    if (validStriker) {
+        d3.selectAll(".striker").attr("visibility", "visible");
+    } else {
+        d3.selectAll(".striker").attr("visibility", "hidden");
+    }
 }
 
 placeHandle(initialHandlePoint);
