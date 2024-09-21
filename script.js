@@ -261,8 +261,8 @@ function isInboard(p) {
 }
 
 function isInBoardBiscuit(p) {
-    return offset + biscuitRadius <= p.x && p.x <= offset + boardWidth - biscuitRadius
-        && offset + biscuitRadius <= p.y && p.y <= offset + boardHeight - biscuitRadius
+    return wallLeft + biscuitRadius <= p.x && p.x <= wallRight - biscuitRadius
+        && wallTop + biscuitRadius <= p.y && p.y <= wallBottom - biscuitRadius;
 }
 
 function calculateCollisionPoint(startPoint, endPoint) {
