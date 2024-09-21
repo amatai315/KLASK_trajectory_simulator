@@ -19,6 +19,9 @@ const goalBoardCenterInterval = realDefferenceBetweenGoalToBoardCenter * raitoDi
 let ballRadius = realBallRadius * raitoDisplayToReal;
 const serviceAreaRadius = realServiceAreaRadius * raitoDisplayToReal;
 
+const buiscuitInnerColor = "rgba(230,230,230,1)"
+const buiscuitEdgeColor = "rgb(160,160,160)"
+
 const offset = 20;
 const canvasWidth = boardWidth + offset * 2;
 const canvasHeight = boardHeight + offset * 2;
@@ -68,6 +71,7 @@ const initialHandlePoint = calculatePointOfHandle(ballInitialPoint, initialDesti
 
 const trajectoryNumber = 4;
 let displayNoticeArcBackwardShot = false;
+let displayBuiscuit = true;
 
 const canvas = d3
     .select("#board-svg-wrapper")
@@ -82,30 +86,7 @@ const board = canvas
     .attr("width", boardWidth)
     .attr("height", boardHeight)
     .attr("fill", "rgb(31, 63, 223)");
-const biscuit_circle_left = canvas
-    .append("circle")
-    .attr("cx", boardCenterX - biscuitCircleInterval)
-    .attr("cy", boardCenterY)
-    .attr("r", biscuitRadius)
-    .attr("stroke", "white")
-    .attr("stroke-width", `${raitoDisplayToReal}`)
-    .attr("fill", "rgba(0,0,0,0)");
-const biscuit_circle_center = canvas
-    .append("circle")
-    .attr("cx", boardCenterX)
-    .attr("cy", boardCenterY)
-    .attr("r", biscuitRadius)
-    .attr("stroke", "white")
-    .attr("stroke-width", `${raitoDisplayToReal}`)
-    .attr("fill", "rgba(0,0,0,0)");
-const biscuit_circle_right = canvas
-    .append("circle")
-    .attr("cx", boardCenterX + biscuitCircleInterval)
-    .attr("cy", boardCenterY)
-    .attr("r", biscuitRadius)
-    .attr("stroke", "white")
-    .attr("stroke-width", `${raitoDisplayToReal}`)
-    .attr("fill", "rgba(0,0,0,0)");
+
 const my_goal = canvas
     .append("circle")
     .attr("cx", myGoalPoint.x)
@@ -160,6 +141,34 @@ const ballDragger = canvas
         d3.drag()
             .on("drag", draggedBall)
     );
+for (let i = -1; i < 2; i++){
+    canvas
+    .append("circle")
+    .attr("cx", boardCenterX + i * biscuitCircleInterval)
+    .attr("cy", boardCenterY)
+    .attr("r", biscuitRadius)
+    .attr("stroke", "white")
+    .attr("stroke-width", `${raitoDisplayToReal}`)
+    .attr("fill", "rgba(0,0,0,0)");
+}
+for (let i = -1; i < 2; i++){
+    canvas
+    .append("circle")
+    .attr("class", "buiscuit")
+    .attr("cx", boardCenterX + i * biscuitCircleInterval)
+    .attr("cy", boardCenterY)
+    .attr("r", biscuitRadius)
+    .attr("stroke", buiscuitEdgeColor)
+    .attr("stroke-width", `${raitoDisplayToReal}`)
+    .attr("fill", buiscuitInnerColor)
+    .call(d3.drag()
+        .on("drag", function(event) {
+            const biscuitPoint = new Point(Number(d3.select(this).attr("cx")) + event.dx, Number(d3.select(this).attr("cy")) + event.dy);
+            if (!isInboard(biscuitPoint)) return;
+            d3.select(this).attr("cx",biscuitPoint.x)
+                .attr("cy", biscuitPoint.y);
+    }));
+}
 const ball = canvas
     .append("circle")
     .attr("cx", ballInitialPoint.x)
@@ -351,7 +360,7 @@ function isIntoOpponentGoalFirst(startPoint, endPoint) {
 }
 
 function drawNoticeArc(p1, p2, ballPoint) {
-    canvas.insert("path", ":nth-child(11)")
+    canvas.insert("path", ":nth-child(8)")
         .attr("class", "notice-arc")
         .attr("fill", "rgb(256,256,256)")
         .attr("stroke", "rgb(256,256,256)")
@@ -438,7 +447,7 @@ function calculateNearestWallCorner(p) {
 }
 
 function drawNoticeTriangle(ballPoint, p1, p2){
-    canvas.insert("path", ":nth-child(11)")
+    canvas.insert("path", ":nth-child(8)")
         .attr("class", "notice-triangle")
         .attr("fill", "rgba(256,256,256, 0.2)")
         .attr("stroke", "rgba(256,256,256, 0.2)")
@@ -561,6 +570,13 @@ function onclickButtonBackwardShot() {
     displayNoticeArcBackwardShot = !displayNoticeArcBackwardShot;
     document.getElementById("backward-shot-button").style.backgroundColor = displayNoticeArcBackwardShot ? "aqua" : "aliceblue";
     redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
+}
+
+function onclickButtonDisplayBuiscuit() {
+    displayBuiscuit = !displayBuiscuit
+    document.getElementById("display-buiscuit-button").style.backgroundColor = displayBuiscuit ? "aqua" : "aliceblue";
+    if (displayBuiscuit) d3.selectAll(".buiscuit").attr("visibility", "visible");
+    else d3.selectAll(".buiscuit").attr("visibility", "hidden");
 }
 
 placeHandle(initialHandlePoint);
