@@ -19,8 +19,8 @@ const goalBoardCenterInterval = realDefferenceBetweenGoalToBoardCenter * raitoDi
 let ballRadius = realBallRadius * raitoDisplayToReal;
 const serviceAreaRadius = realServiceAreaRadius * raitoDisplayToReal;
 
-const buiscuitInnerColor = "rgba(230,230,230,1)"
-const buiscuitEdgeColor = "rgb(160,160,160)"
+const biscuitInnerColor = "rgba(230,230,230,1)"
+const biscuitEdgeColor = "rgb(160,160,160)"
 
 const offset = 20;
 const canvasWidth = boardWidth + offset * 2;
@@ -71,7 +71,7 @@ const initialHandlePoint = calculatePointOfHandle(ballInitialPoint, initialDesti
 
 const trajectoryNumber = 4;
 let displayNoticeArcBackwardShot = false;
-let displayBuiscuit = true;
+let displayBiscuit = true;
 
 const canvas = d3
     .select("#board-svg-wrapper")
@@ -154,13 +154,13 @@ for (let i = -1; i < 2; i++){
 for (let i = -1; i < 2; i++){
     canvas
     .append("circle")
-    .attr("class", "buiscuit")
+    .attr("class", "biscuit")
     .attr("cx", boardCenterX + i * biscuitCircleInterval)
     .attr("cy", boardCenterY)
     .attr("r", biscuitRadius)
-    .attr("stroke", buiscuitEdgeColor)
+    .attr("stroke", biscuitEdgeColor)
     .attr("stroke-width", `${raitoDisplayToReal}`)
-    .attr("fill", buiscuitInnerColor)
+    .attr("fill", biscuitInnerColor)
     .call(d3.drag()
         .on("drag", function(event) {
             const biscuitPoint = new Point(Number(d3.select(this).attr("cx")) + event.dx, Number(d3.select(this).attr("cy")) + event.dy);
@@ -577,11 +577,11 @@ function onclickButtonBackwardShot() {
     redrawAllTrajectoryAndAllNoticeArc(getBallPoint(), ballDirectionVector);
 }
 
-function onclickButtonDisplayBuiscuit() {
-    displayBuiscuit = !displayBuiscuit
-    document.getElementById("display-buiscuit-button").style.backgroundColor = displayBuiscuit ? "aqua" : "aliceblue";
-    if (displayBuiscuit) d3.selectAll(".buiscuit").attr("visibility", "visible");
-    else d3.selectAll(".buiscuit").attr("visibility", "hidden");
+function onclickButtonDisplayBiscuit() {
+    displayBiscuit = !displayBiscuit
+    document.getElementById("display-biscuit-button").style.backgroundColor = displayBiscuit ? "aqua" : "aliceblue";
+    if (displayBiscuit) d3.selectAll(".biscuit").attr("visibility", "visible");
+    else d3.selectAll(".biscuit").attr("visibility", "hidden");
 }
 
 placeHandle(initialHandlePoint);
