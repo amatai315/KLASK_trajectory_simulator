@@ -18,6 +18,9 @@ const goalRadius = realGoalRadius * raitoDisplayToReal;
 const goalBoardCenterInterval = realDefferenceBetweenGoalToBoardCenter * raitoDisplayToReal;
 let ballRadius = realBallRadius * raitoDisplayToReal;
 const serviceAreaRadius = realServiceAreaRadius * raitoDisplayToReal;
+const KLASKLogoWidth = 92 * raitoDisplayToReal;
+const KLASKLogoHeight = KLASKLogoWidth * 328 / 760;
+const distanceBetweenBoardCenterYandKLASKLogo = 70 * raitoDisplayToReal;
 
 const biscuitInnerColor = "rgba(230,230,230,1)"
 const biscuitEdgeColor = "rgb(160,160,160)"
@@ -137,6 +140,21 @@ const opponent_service_area_right = canvas
     .attr("stroke", "white")
     .attr("stroke-width", `${raitoDisplayToReal}`)
     .attr("fill", "rgba(0,0,0,0)");
+const my_KLASK_logo = canvas
+    .append("image")
+    .attr("href", `./image/KLASK_logo.png`)
+    .attr("width", KLASKLogoWidth)
+    .attr("height", KLASKLogoHeight)
+    .attr("x", boardCenterX - KLASKLogoWidth / 2)
+    .attr("y", boardCenterY + distanceBetweenBoardCenterYandKLASKLogo)
+const oppenent_KLASK_logo = canvas
+    .append("image")
+    .attr("href", `./image/KLASK_logo.png`)
+    .attr("width", KLASKLogoWidth)
+    .attr("height", KLASKLogoHeight)
+    .attr("x", boardCenterX - KLASKLogoWidth / 2)
+    .attr("y", boardCenterY - distanceBetweenBoardCenterYandKLASKLogo)
+    .attr("transform", `rotate(180,${boardCenterX}, ${boardCenterY - distanceBetweenBoardCenterYandKLASKLogo})`)
 const ballDragger = canvas
     .append("circle")
     .attr("cx", ballInitialPoint.x)
